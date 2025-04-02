@@ -128,7 +128,7 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent)
 
 UObject* USceneComponent::Duplicate()
 {
-    USceneComponent* NewObj = FObjectFactory::ConstructObject<USceneComponent>();
+    USceneComponent* NewObj = FObjectFactory::ConstructObject<USceneComponent>(GetOuter());
 
     NewObj->RelativeLocation = this->RelativeLocation;
     NewObj->RelativeRotation = this->RelativeRotation;

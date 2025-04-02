@@ -87,7 +87,7 @@ void UActorComponent::Deactivate()
 
 UObject* UActorComponent::Duplicate()
 {
-    UActorComponent* NewObj = FObjectFactory::ConstructObject<UActorComponent>();
+    UActorComponent* NewObj = FObjectFactory::ConstructObject<UActorComponent>(GetOuter());
     NewObj->bHasBeenInitialized = this->bHasBeenInitialized;
     NewObj->bHasBegunPlay = this->bHasBegunPlay;
     NewObj->bIsBeingDestroyed = this->bIsBeingDestroyed;

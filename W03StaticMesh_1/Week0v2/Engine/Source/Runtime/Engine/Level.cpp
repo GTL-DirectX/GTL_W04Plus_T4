@@ -94,7 +94,7 @@ TArray<AActor*> ULevel::GetActors()
 
 UObject* ULevel::Duplicate()
 {
-    ULevel* NewLevel = FObjectFactory::ConstructObject<ULevel>();
+    ULevel* NewLevel = FObjectFactory::ConstructObject<ULevel>(GetOuter());
     NewLevel->DuplicateSubObjects();
     return NewLevel;
 }

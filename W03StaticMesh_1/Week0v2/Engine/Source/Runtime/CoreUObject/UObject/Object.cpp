@@ -21,11 +21,7 @@ UObject::UObject()
 
 UObject* UObject::Duplicate()
 {
-    UObject* NewObj = FObjectFactory::ConstructObject<UObject>();
-    NewObj->UUID = this->UUID;
-    NewObj->InternalIndex = this->InternalIndex;
-    NewObj->NamePrivate = this->NamePrivate;
-    NewObj->ClassPrivate = this->ClassPrivate;
+    UObject* NewObj = FObjectFactory::ConstructObject<UObject>(OuterPrivate);
     NewObj->DuplicateSubObjects();
 
     return NewObj;
@@ -33,9 +29,6 @@ UObject* UObject::Duplicate()
 
 void UObject::DuplicateSubObjects()
 {
-    UObject* NewObject = FObjectFactory::ConstructObject<UObject>(OuterPrivate);
-    NewObject->DuplicateSubObjects();
-    return NewObject;
 }
 
 UWorld* UObject::GetWorld() const

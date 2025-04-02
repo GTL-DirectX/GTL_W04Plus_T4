@@ -100,7 +100,7 @@ bool UPrimitiveComponent::IntersectRayTriangle(const FVector& rayOrigin, const F
 
 UObject* UPrimitiveComponent::Duplicate()
 {
-    UPrimitiveComponent* NewObj = FObjectFactory::ConstructObject<UPrimitiveComponent>();
+    UPrimitiveComponent* NewObj = FObjectFactory::ConstructObject<UPrimitiveComponent>(GetOuter());
 
     NewObj->AABB = this->AABB;
     NewObj->m_Type = this->m_Type;
