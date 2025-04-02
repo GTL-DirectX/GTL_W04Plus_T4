@@ -30,6 +30,7 @@ FWorldContext& UEngine::CreateNewWorldContext(EWorldType WorldType)
     FString Name = FString("Context_") + std::to_string(NextWorldContextHandle++);
     NewWorldContext->ContextHandle = Name;
     NewWorldContext->SetCurrentWorld(FObjectFactory::ConstructObject<UWorld>(this));
+    NewWorldContext->World()->Initialize(WorldType);
 
     WorldContexts.Add(*NewWorldContext);
     return *NewWorldContext;

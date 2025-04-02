@@ -292,11 +292,17 @@ void FEngineLoop::WindowInit(HINSTANCE hInstance)
 
 void FEngineLoop::StartPIE()
 {
+    if (GWorld->IsPIEWorld())
+    {
+        return;
+    }
+
     UWorld* EditorWorld = GEditor->GetEditorWorldContext().World();
 
     UWorld* PIEWorld = UWorld::DuplicateWorldForPIE(EditorWorld);
 
     GWorld = PIEWorld;
+    UE_LOG(LogLevel::Display, *GWorld->GetName());
 
     // AActor::BeginPlay()
     PIEWorld->InitializeActorsForPlay();
@@ -308,7 +314,7 @@ void FEngineLoop::EndPIE()
     {
         GWorld->CleanupWorld();
         delete GWorld;
+        GWorld = GEditor->GetEditorWorldContext().World();
+        UE_LOG(LogLevel::Display, *GWorld->GetName());
     }
-
-    GWorld = GEditor->GetEditorWorldContext().World();
 }

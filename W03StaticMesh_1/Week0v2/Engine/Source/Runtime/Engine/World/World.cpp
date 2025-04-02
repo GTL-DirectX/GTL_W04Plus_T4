@@ -1,4 +1,8 @@
 #include "World/World.h"
+
+#include "Editor.h"
+#include "Engine/EditorEngine.h"
+#include "WorldContext.h"
 #include "Actors/Player.h"
 #include "BaseGizmos/TransformGizmo.h"
 #include "Camera/CameraComponent.h"
@@ -17,12 +21,13 @@ UWorld::~UWorld()
 {
 }
 
-void UWorld::Initialize()
+void UWorld::Initialize(EWorldType InWorldType)
 {
     CreateBaseObject();
     ULevel* NewLevel = FObjectFactory::ConstructObject<ULevel>(this);
     SetCurrentLevel(NewLevel);
     CurrentLevel->Initialize();
+    WorldType = InWorldType;
 }
 
 void UWorld::Tick(float DeltaTime)
@@ -53,10 +58,25 @@ UWorld* UWorld::GetWorld() const
 
 UWorld* UWorld::DuplicateWorldForPIE(UWorld* OwningWorld)
 {
-    return nullptr;
+    FWorldContext& InitialWorldContext = GEditor->CreateNewWorldContext(EWorldType::PIE);
+    UWorld* PIEWorld = InitialWorldContext.World();
+    ULevel* PIELevel = PIEWorld->GetCurrentLevel();
+
+    for (AActor* Actor : OwningWorld->GetCurrentLevel()->GetActors())
+    {
+        if (Actor)
+        {
+            if (AActor* DuplicatedActor = Cast<AActor>(Actor->Duplicate()))
+            {
+                PIELevel->AddActor(DuplicatedActor);
+            }
+        }
+    }
+
+    return PIEWorld;
 }
 
-void UWorld::InitializeActorsForPlay()
+void UWorld::InitializeActorsForPlay() const
 {
     for (AActor* Actor : CurrentLevel->GetActors())
     {
@@ -69,10 +89,10 @@ void UWorld::InitializeActorsForPlay()
 
 bool UWorld::IsPIEWorld() const
 {
-    return WorldType == EWorldType::PIE ? true : false;
+    return WorldType == EWorldType::PIE;
 }
 
-void UWorld::CleanupWorld()
+void UWorld::CleanupWorld() const
 {
     CurrentLevel->Release();
     delete CurrentLevel;

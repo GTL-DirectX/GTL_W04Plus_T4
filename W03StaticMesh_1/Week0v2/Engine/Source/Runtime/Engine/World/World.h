@@ -20,7 +20,7 @@ public:
     UWorld();
     virtual ~UWorld();
 
-    virtual void Initialize();
+    virtual void Initialize(EWorldType InWorldType);
     virtual void Tick(float DeltaTime);
     virtual void Release();
 
@@ -28,9 +28,9 @@ public:
 
 public:
     UObject* WorldGizmo = nullptr;
-    void InitializeActorsForPlay();
+    void InitializeActorsForPlay() const;
     bool IsPIEWorld() const;
-    void CleanupWorld();
+    void CleanupWorld() const;
 
     /**
      * Level에 Actor를 Spawn합니다.

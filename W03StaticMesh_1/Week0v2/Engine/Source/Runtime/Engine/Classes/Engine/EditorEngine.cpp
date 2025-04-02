@@ -9,7 +9,6 @@ void UEditorEngine::Init()
     Super::Init();
     FWorldContext& InitialWorldContext = CreateNewWorldContext(EWorldType::Editor);
     EditorWorld = InitialWorldContext.World();
-    EditorWorld->Initialize();
 
     /*FWorldContext& PlayWorldContext = CreateNewWorldContext(EWorldType::Game);
     PlayWorld = PlayWorldContext.World();
