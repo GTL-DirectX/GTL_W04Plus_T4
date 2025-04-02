@@ -60,6 +60,12 @@ void ULevel::Release()
     GUObjectArray.ProcessPendingDestroyObjects();
 }
 
+void ULevel::AddPendingActor(AActor* Actor)
+{
+    if (Actor)
+        PendingBeginPlayActors.Add(Actor);
+}
+
 void ULevel::AddActor(AActor* Actor)
 {
     if (Actor)

@@ -1,4 +1,5 @@
 #include "EngineLoop.h"
+
 #include "ImGuiManager.h"
 #include "World/World.h"
 #include "Camera/CameraComponent.h"
@@ -6,9 +7,13 @@
 #include "UnrealEd/EditorViewportClient.h"
 #include "UnrealEd/UnrealEd.h"
 #include "UnrealClient.h"
+// @todo Use Engine.h
+#include "Editor.h"
+#include "Engine/EditorEngine.h"
 #include "slate/Widgets/Layout/SSplitter.h"
 #include "LevelEditor/SLevelEditor.h"
 #include "CoreUObject/UObject/UObjectArray.h"
+#include "CoreUObject/UObject/ObjectFactory.h"
 
 #include "Engine/EditorEngine.h"
 
@@ -136,33 +141,41 @@ int32 FEngineLoop::Init(HINSTANCE hInstance)
 void FEngineLoop::Render()
 {
     graphicDevice.Prepare();
-    if (LevelEditor->IsMultiViewport())
+    if (GWorld->IsPIEWorld())
     {
-        std::shared_ptr<FEditorViewportClient> viewportClient = GetLevelEditor()->GetActiveViewportClient();
-        for (int i = 0; i < 4; ++i)
+        renderer.PrepareRender();
+        renderer.Render(GWorld, LevelEditor->GetActiveViewportClient());
+    }
+    else
+    {
+        if (LevelEditor->IsMultiViewport())
         {
-            LevelEditor->SetViewportClient(i);
-            // graphicDevice.DeviceContext->RSSetViewports(1, &LevelEditor->GetViewports()[i]->GetD3DViewport());
+            std::shared_ptr<FEditorViewportClient> viewportClient = GetLevelEditor()->GetActiveViewportClient();
+            for (int i = 0; i < 4; ++i)
+            {
+                LevelEditor->SetViewportClient(i);
+                // graphicDevice.DeviceContext->RSSetViewports(1, &LevelEditor->GetViewports()[i]->GetD3DViewport());
+                // graphicDevice.ChangeRasterizer(LevelEditor->GetActiveViewportClient()->GetViewMode());
+                // renderer.ChangeViewMode(LevelEditor->GetActiveViewportClient()->GetViewMode());
+                // renderer.PrepareShader();
+                // renderer.UpdateLightBuffer();
+                // RenderWorld();
+                renderer.PrepareRender();
+                renderer.Render(GWorld, LevelEditor->GetActiveViewportClient());
+            }
+            GetLevelEditor()->SetViewportClient(viewportClient);
+        }
+        else
+        {
+            // graphicDevice.DeviceContext->RSSetViewports(1, &LevelEditor->GetActiveViewportClient()->GetD3DViewport());
             // graphicDevice.ChangeRasterizer(LevelEditor->GetActiveViewportClient()->GetViewMode());
             // renderer.ChangeViewMode(LevelEditor->GetActiveViewportClient()->GetViewMode());
             // renderer.PrepareShader();
             // renderer.UpdateLightBuffer();
             // RenderWorld();
             renderer.PrepareRender();
-            renderer.Render(GWorld,LevelEditor->GetActiveViewportClient());
+            renderer.Render(GWorld, LevelEditor->GetActiveViewportClient());
         }
-        GetLevelEditor()->SetViewportClient(viewportClient);
-    }
-    else
-    {
-        // graphicDevice.DeviceContext->RSSetViewports(1, &LevelEditor->GetActiveViewportClient()->GetD3DViewport());
-        // graphicDevice.ChangeRasterizer(LevelEditor->GetActiveViewportClient()->GetViewMode());
-        // renderer.ChangeViewMode(LevelEditor->GetActiveViewportClient()->GetViewMode());
-        // renderer.PrepareShader();
-        // renderer.UpdateLightBuffer();
-        // RenderWorld();
-        renderer.PrepareRender();
-        renderer.Render(GWorld,LevelEditor->GetActiveViewportClient());
     }
 }
 
@@ -275,4 +288,27 @@ void FEngineLoop::WindowInit(HINSTANCE hInstance)
         CW_USEDEFAULT, CW_USEDEFAULT, 1000, 1000,
         nullptr, nullptr, hInstance, nullptr
     );
+}
+
+void FEngineLoop::StartPIE()
+{
+    UWorld* EditorWorld = GEditor->GetEditorWorldContext().World();
+
+    UWorld* PIEWorld = UWorld::DuplicateWorldForPIE(EditorWorld);
+
+    GWorld = PIEWorld;
+
+    // AActor::BeginPlay()
+    PIEWorld->InitializeActorsForPlay();
+}
+
+void FEngineLoop::EndPIE()
+{
+    if (GWorld && GWorld->IsPIEWorld())
+    {
+        GWorld->CleanupWorld();
+        delete GWorld;
+    }
+
+    GWorld = GEditor->GetEditorWorldContext().World();
 }

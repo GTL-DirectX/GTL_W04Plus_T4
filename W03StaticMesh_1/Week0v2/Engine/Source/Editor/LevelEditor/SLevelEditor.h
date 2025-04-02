@@ -25,7 +25,6 @@ private:
     bool bInitialize;
     SSplitterH* HSplitter;
     SSplitterV* VSplitter;
-    UWorld* World;
     std::shared_ptr<FEditorViewportClient> viewportClients[4];
     std::shared_ptr<FEditorViewportClient> ActiveViewportClient;
 

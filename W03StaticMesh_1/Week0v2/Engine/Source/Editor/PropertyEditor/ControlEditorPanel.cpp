@@ -259,20 +259,20 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
             if (ImGui::Selectable(primitive.label))
             {
                 // GEngineLoop.GetWorld()->SpawnObject(static_cast<OBJECTS>(primitive.obj));
-                ULevel* Level = GWorld->GetLevel();
+                ULevel* Level = GWorld->GetCurrentLevel();
                 AActor* SpawnedActor = nullptr;
                 switch (static_cast<OBJECTS>(primitive.obj))
                 {
                 case OBJ_SPHERE:
                 {
-                    SpawnedActor = Level->SpawnActor<AActor>();
+                    SpawnedActor = GWorld->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_SPHERE"));
                     SpawnedActor->AddComponent<USphereComp>();
                     break;
                 }
                 case OBJ_CUBE:
                 {
-                    AStaticMeshActor* TempActor = Level->SpawnActor<AStaticMeshActor>();
+                    AStaticMeshActor* TempActor = GWorld->SpawnActor<AStaticMeshActor>();
                     TempActor->SetActorLabel(TEXT("OBJ_CUBE"));
                     UStaticMeshComponent* MeshComp = TempActor->GetStaticMeshComponent();
                     FManagerOBJ::CreateStaticMesh("Assets/helloBlender.obj");
@@ -281,14 +281,14 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
                 }
                 case OBJ_SpotLight:
                 {
-                    SpawnedActor = Level->SpawnActor<AActor>();
+                    SpawnedActor = GWorld->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_SpotLight"));
                     SpawnedActor->AddComponent<ULightComponentBase>();
                     break;
                 }
                 case OBJ_PARTICLE:
                 {
-                    SpawnedActor = Level->SpawnActor<AActor>();
+                    SpawnedActor = GWorld->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_PARTICLE"));
                     UParticleSubUVComp* ParticleComponent = SpawnedActor->AddComponent<UParticleSubUVComp>();
                     ParticleComponent->SetTexture(L"Assets/Texture/T_Explosion_SubUV.png");
@@ -299,7 +299,7 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
                 }
                 case OBJ_Text:
                 {
-                    SpawnedActor = Level->SpawnActor<AActor>();
+                    SpawnedActor = GWorld->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_Text"));
                     UText* TextComponent = SpawnedActor->AddComponent<UText>();
                     TextComponent->SetTexture(L"Assets/Texture/font.png");

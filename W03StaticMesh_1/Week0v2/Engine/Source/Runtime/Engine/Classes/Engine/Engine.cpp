@@ -28,7 +28,7 @@ FWorldContext& UEngine::CreateNewWorldContext(EWorldType WorldType)
     FWorldContext* NewWorldContext = new FWorldContext();
     NewWorldContext->WorldType = WorldType;
     FString Name = FString("Context_") + std::to_string(NextWorldContextHandle++);
-    NewWorldContext->ContectName = Name;
+    NewWorldContext->ContextHandle = Name;
     NewWorldContext->SetCurrentWorld(FObjectFactory::ConstructObject<UWorld>(this));
 
     WorldContexts.Add(*NewWorldContext);

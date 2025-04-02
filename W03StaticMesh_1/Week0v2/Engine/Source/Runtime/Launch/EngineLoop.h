@@ -50,4 +50,7 @@ private:
 public:
     SLevelEditor* GetLevelEditor() const { return LevelEditor; }
     UnrealEd* GetUnrealEditor() const { return UnrealEditor; }
+
+    void StartPIE();
+    void EndPIE();
 };

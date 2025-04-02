@@ -41,7 +41,6 @@ void FEditorViewportClient::Tick(float DeltaTime)
     Input();
     UpdateViewMatrix();
     UpdateProjectionMatrix();
-
 }
 
 void FEditorViewportClient::Release()
@@ -123,7 +122,7 @@ void FEditorViewportClient::Input()
     // Focus Selected Actor
     if (GetAsyncKeyState('F') & 0x8000)
     {
-        if (AActor* PickedActor = GWorld->GetLevel()->GetSelectedActor())
+        if (AActor* PickedActor = GWorld->GetCurrentLevel()->GetSelectedActor())
         {
             FViewportCameraTransform& ViewTransform = ViewTransformPerspective;
             ViewTransform.SetLocation(
@@ -132,7 +131,18 @@ void FEditorViewportClient::Input()
             );
         }
     }
+
+    if (GetAsyncKeyState(VK_F5) & 0x8000)
+    {
+        GEngineLoop.StartPIE();
+    }
+
+    if (GetAsyncKeyState(VK_F6) & 0x8000)
+    {
+        GEngineLoop.EndPIE();
+    }
 }
+
 void FEditorViewportClient::ResizeViewport(const DXGI_SWAP_CHAIN_DESC& swapchaindesc)
 {
     if (Viewport) { 
@@ -380,12 +390,14 @@ void FEditorViewportClient::LoadConfig(const TMap<FString, FString>& config)
     CameraSpeedSetting = GetValueFromConfig(config, "CameraSpeedSetting" + ViewportNum, 1);
     CameraSpeedScalar = GetValueFromConfig(config, "CameraSpeedScalar" + ViewportNum, 1.0f);
     GridSize = GetValueFromConfig(config, "GridSize"+ ViewportNum, 10.0f);
-    ViewTransformPerspective.ViewLocation.x = GetValueFromConfig(config, "PerspectiveCameraLocX" + ViewportNum, 0.0f);
-    ViewTransformPerspective.ViewLocation.y = GetValueFromConfig(config, "PerspectiveCameraLocY" + ViewportNum, 0.0f);
-    ViewTransformPerspective.ViewLocation.z = GetValueFromConfig(config, "PerspectiveCameraLocZ" + ViewportNum, 0.0f);
-    ViewTransformPerspective.ViewRotation.x = GetValueFromConfig(config, "PerspectiveCameraRotX" + ViewportNum, 0.0f);
-    ViewTransformPerspective.ViewRotation.y = GetValueFromConfig(config, "PerspectiveCameraRotY" + ViewportNum, 0.0f);
-    ViewTransformPerspective.ViewRotation.z = GetValueFromConfig(config, "PerspectiveCameraRotZ" + ViewportNum, 0.0f);
+    FVector Location = FVector(GetValueFromConfig(config, "PerspectiveCameraLocX" + ViewportNum, 0.0f),
+                                GetValueFromConfig(config, "PerspectiveCameraLocY" + ViewportNum, 0.0f),
+                                GetValueFromConfig(config, "PerspectiveCameraLocZ" + ViewportNum, 0.0f));
+    ViewTransformPerspective.SetLocation(Location);
+    FVector Rotation = FVector(GetValueFromConfig(config, "PerspectiveCameraRotX" + ViewportNum, 0.0f),
+                                GetValueFromConfig(config, "PerspectiveCameraRotY" + ViewportNum, 0.0f),
+                                GetValueFromConfig(config, "PerspectiveCameraRotZ" + ViewportNum, 0.0f));
+    ViewTransformPerspective.SetRotation(Rotation);
     ShowFlag = GetValueFromConfig(config, "ShowFlag" + ViewportNum, 31.0f);
     ViewMode = static_cast<EViewModeIndex>(GetValueFromConfig(config, "ViewMode" + ViewportNum, 0));
     ViewportType = static_cast<ELevelViewportType>(GetValueFromConfig(config, "ViewportType" + ViewportNum, 3));

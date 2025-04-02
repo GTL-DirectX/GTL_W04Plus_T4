@@ -1,6 +1,9 @@
 #pragma once
 #include "Define.h" 
 #include <d3d11.h>
+
+#include "ViewportClient.h"
+
 enum class EViewScreenLocation
 {
     TopLeft,
@@ -9,12 +12,27 @@ enum class EViewScreenLocation
     BottomRight
 };
 
+/**
+ * Encapsulates the I/O of a viewport.
+ * The viewport display is implemented using the platform independent RHI.
+ */
 class FViewport
 {
 public:
     FViewport();
     FViewport(EViewScreenLocation _viewLocation) : viewLocation(_viewLocation) {}
-    ~FViewport();
+    // Constructor.
+    FViewport(FViewportClient* InViewportClient);
+    // Destructor
+    virtual ~FViewport();
+
+    /**
+     * Updates the viewport's displayed pixels with the results of calling ViewportClient->Draw.
+     *
+     * @param	bShouldPresent	Whether we want this frame to be presented
+     */
+    //void Draw(bool bShouldPresent = true);
+
     void Initialize();
     void ResizeViewport(const DXGI_SWAP_CHAIN_DESC& swapchaindesc);
     void ResizeViewport(FRect Top, FRect Bottom, FRect Left, FRect Right);

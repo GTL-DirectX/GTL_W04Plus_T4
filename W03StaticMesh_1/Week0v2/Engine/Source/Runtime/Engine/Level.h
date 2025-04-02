@@ -1,7 +1,6 @@
 #pragma once
 
 #include "UObject/ObjectMacros.h"
-#include "UObject/ObjectFactory.h"
 
 class AActor;
 class UObject;
@@ -18,6 +17,8 @@ public:
     virtual void Tick(float DeltaTime);
     virtual void Release();
 
+    void AddPendingActor(AActor* Actor);
+
     void AddActor(AActor* Actor);
     void RemoveActor(AActor* Actor);
     TArray<AActor*> GetActors();
@@ -27,25 +28,6 @@ public:
     void SetPickedActor(AActor* InActor)
     {
         SelectedActor = InActor;
-    }
-
-    /**
-     * Level에 Actor를 Spawn합니다.
-     * @tparam T AActor를 상속받은 클래스
-     * @return Spawn된 Actor의 포인터
-     */
-    template <typename T>
-        requires std::derived_from<T, AActor>
-    T* SpawnActor()
-    {
-        T* NewActor = FObjectFactory::ConstructObject<T>();
-        AddActor(NewActor);
-        // TODO: 일단 AddComponent에서 Component마다 초기화
-        // 추후에 RegisterComponent() 만들어지면 주석 해제
-        // Actor->InitializeComponents();
-        //ActorsArray.Add(NewActor);
-        PendingBeginPlayActors.Add(NewActor);
-        return NewActor;
     }
 
 protected:

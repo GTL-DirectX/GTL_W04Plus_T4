@@ -44,6 +44,8 @@ public:
         return bActorIsBeingDestroyed;
     }
 
+    bool IsTickInEditor() const { return bTickInEditor; }
+
     /**
      * Actor에 컴포넌트를 새로 추가합니다.
      * @tparam T UActorComponent를 상속받은 Component

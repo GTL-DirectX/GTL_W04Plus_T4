@@ -4,6 +4,8 @@
 #include "Camera/CameraComponent.h"
 #include "Runtime/Engine/Level.h"
 
+UWorld* GWorld = nullptr;
+
 UWorld::UWorld()
     : Camera(nullptr)
     , EditorPlayer(nullptr)
@@ -18,9 +20,9 @@ UWorld::~UWorld()
 void UWorld::Initialize()
 {
     CreateBaseObject();
-        
-    Level = new ULevel();
-    Level->Initialize();
+    ULevel* NewLevel = FObjectFactory::ConstructObject<ULevel>(this);
+    SetCurrentLevel(NewLevel);
+    CurrentLevel->Initialize();
 }
 
 void UWorld::Tick(float DeltaTime)
@@ -30,34 +32,38 @@ void UWorld::Tick(float DeltaTime)
 
     if (Camera)
         Camera->TickComponent(DeltaTime);
-    
-    for (AActor* Actor : Level->GetActors())
+
+    if (CurrentLevel)
     {
-        if (Actor && Actor->IsActorTickEnabled())
-        {
-            Actor->Tick(DeltaTime);
-        }
+        CurrentLevel->Tick(DeltaTime);
     }
 }
 
 void UWorld::Release()
 {
-    Level->Release();
-    delete Level;
+    CurrentLevel->Release();
+    delete CurrentLevel;
     ReleaseBaseObject();
 }
 
-UWorld* UWorld::DuplicateWorldForPIE(UWorld* EditorWorld)
+UWorld* UWorld::GetWorld() const
+{
+    return const_cast<UWorld* > (this);
+}
+
+UWorld* UWorld::DuplicateWorldForPIE(UWorld* OwningWorld)
 {
     return nullptr;
 }
 
 void UWorld::InitializeActorsForPlay()
 {
-    for (AActor* Actor : Level->GetActors())
+    for (AActor* Actor : CurrentLevel->GetActors())
     {
         if (Actor)
+        {
             Actor->BeginPlay();
+        }
     }
 }
 
@@ -68,7 +74,8 @@ bool UWorld::IsPIEWorld() const
 
 void UWorld::CleanupWorld()
 {
-    
+    CurrentLevel->Release();
+    delete CurrentLevel;
 }
 
 void UWorld::CreateBaseObject()
@@ -78,11 +85,11 @@ void UWorld::CreateBaseObject()
         EditorPlayer = FObjectFactory::ConstructObject<AEditorPlayer>(this);
     }
 
-    if (camera == nullptr)
+    if (Camera == nullptr)
     {
-        camera = FObjectFactory::ConstructObject<UCameraComponent>(this);
-        camera->SetLocation(FVector(8.0f, 8.0f, 8.f));
-        camera->SetRotation(FVector(0.0f, 45.0f, -135.0f));
+        Camera = FObjectFactory::ConstructObject<UCameraComponent>(this);
+        Camera->SetLocation(FVector(8.0f, 8.0f, 8.f));
+        Camera->SetRotation(FVector(0.0f, 45.0f, -135.0f));
     }
 
     if (LocalGizmo == nullptr)
@@ -99,16 +106,16 @@ void UWorld::ReleaseBaseObject()
         LocalGizmo = nullptr;
     }
 
-    if (worldGizmo)
+    if (WorldGizmo)
     {
-        delete worldGizmo;
-        worldGizmo = nullptr;
+        delete WorldGizmo;
+        WorldGizmo = nullptr;
     }
 
-    if (camera)
+    if (Camera)
     {
-        delete camera;
-        camera = nullptr;
+        delete Camera;
+        Camera = nullptr;
     }
 
     if (EditorPlayer)
@@ -121,4 +128,31 @@ void UWorld::ReleaseBaseObject()
 void UWorld::SetPickingGizmo(UObject* Object)
 {
 	PickingGizmo = Cast<USceneComponent>(Object);
+}
+
+#if WITH_EDITORONLY_DATA
+/** Set the CurrentLevel for this world. **/
+bool UWorld::SetCurrentLevel(class ULevel* InLevel)
+{
+    bool bChanged = false;
+    if (CurrentLevel != InLevel)
+    {
+        //ULevel* OldLevel = CurrentLevel;
+        CurrentLevel = InLevel;
+        bChanged = true;
+
+        //FWorldDelegates::OnCurrentLevelChanged.Broadcast(CurrentLevel, OldLevel, this);
+    }
+    return bChanged;
+}
+#endif
+
+/** Get the CurrentLevel for this world. **/
+ULevel* UWorld::GetCurrentLevel() const
+{
+#if WITH_EDITORONLY_DATA
+    return CurrentLevel;
+#else
+    return PersistentLevel;
+#endif
 }
