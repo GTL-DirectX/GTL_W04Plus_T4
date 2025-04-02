@@ -124,7 +124,7 @@ private:
 template <typename T> requires std::derived_from<T, UActorComponent>
 T* AActor::AddComponent()
 {
-    T* Component = FObjectFactory::ConstructObject<T>();
+    T* Component = FObjectFactory::ConstructObject<T>(GetOuter());
     OwnedComponents.Add(Component);
     Component->Owner = this;
 

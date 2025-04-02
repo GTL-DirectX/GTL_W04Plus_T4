@@ -9,6 +9,7 @@
 #include "Engine/StaticMeshActor.h"
 #include "Components/SkySphereComponent.h"
 
+UWorld* GWorld = nullptr;
 
 void UWorld::Initialize()
 {
@@ -28,19 +29,19 @@ void UWorld::CreateBaseObject()
 {
     if (EditorPlayer == nullptr)
     {
-        EditorPlayer = FObjectFactory::ConstructObject<AEditorPlayer>();;
+        EditorPlayer = FObjectFactory::ConstructObject<AEditorPlayer>(this);
     }
 
     if (camera == nullptr)
     {
-        camera = FObjectFactory::ConstructObject<UCameraComponent>();
+        camera = FObjectFactory::ConstructObject<UCameraComponent>(this);
         camera->SetLocation(FVector(8.0f, 8.0f, 8.f));
         camera->SetRotation(FVector(0.0f, 45.0f, -135.0f));
     }
 
     if (LocalGizmo == nullptr)
     {
-        LocalGizmo = FObjectFactory::ConstructObject<UTransformGizmo>();
+        LocalGizmo = FObjectFactory::ConstructObject<UTransformGizmo>(this);
     }
 }
 
@@ -74,9 +75,12 @@ void UWorld::ReleaseBaseObject()
 
 void UWorld::Tick(float DeltaTime)
 {
-	camera->TickComponent(DeltaTime);
-	EditorPlayer->Tick(DeltaTime);
-	LocalGizmo->Tick(DeltaTime);
+    if (camera)
+	    camera->TickComponent(DeltaTime);
+    if (EditorPlayer)
+	    EditorPlayer->Tick(DeltaTime);
+    if (LocalGizmo)
+	    LocalGizmo->Tick(DeltaTime);
 
     // SpawnActor()에 의해 Actor가 생성된 경우, 여기서 BeginPlay 호출
     for (AActor* Actor : PendingBeginPlayActors)
@@ -110,6 +114,11 @@ void UWorld::Release()
 	ReleaseBaseObject();
 
     GUObjectArray.ProcessPendingDestroyObjects();
+}
+
+UWorld* UWorld::GetWorld() const
+{
+    return const_cast<UWorld*>(this);
 }
 
 bool UWorld::DestroyActor(AActor* ThisActor)

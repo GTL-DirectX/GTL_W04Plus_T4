@@ -32,6 +32,7 @@ private:
 
     FName NamePrivate;
     UClass* ClassPrivate = nullptr;
+    UObject* OuterPrivate = nullptr;
 
 public:
     UObject();
@@ -52,10 +53,8 @@ public:
 public:
 
 
-    UWorld* GetWorld()
-    {
-        return GEngineLoop.GetWorld();
-    }
+    virtual UWorld* GetWorld() const;
+    UObject* GetOuter() const { return OuterPrivate; }
 
     FEngineLoop& GetEngine()
     {

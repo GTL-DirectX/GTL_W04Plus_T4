@@ -35,7 +35,7 @@ void OutlinerEditorPanel::Render()
 
     if (ImGui::TreeNode("Primitives")) // 트리 노드 생성
     {
-        UWorld* World = GEngineLoop.GetWorld();
+        UWorld* World = GWorld;
         for (AActor* Actor : World->GetActors())
         {
             if (ImGui::Selectable(*Actor->GetActorLabel(), World->GetSelectedActor() == Actor))

@@ -258,7 +258,7 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
             if (ImGui::Selectable(primitive.label))
             {
                 // GEngineLoop.GetWorld()->SpawnObject(static_cast<OBJECTS>(primitive.obj));
-                UWorld* World = GEngineLoop.GetWorld();
+                UWorld* World = GWorld;
                 AActor* SpawnedActor = nullptr;
                 switch (static_cast<OBJECTS>(primitive.obj))
                 {
@@ -418,7 +418,7 @@ void ControlEditorPanel::CreateFlagButton() const
 // code is so dirty / Please refactor
 void ControlEditorPanel::CreateSRTButton(ImVec2 ButtonSize) const
 {
-    AEditorPlayer* Player = GEngineLoop.GetWorld()->GetEditorPlayer();
+    AEditorPlayer* Player = GWorld->GetEditorPlayer();
 
     ImVec4 ActiveColor = ImVec4(0.00f, 0.00f, 0.85f, 1.0f);
     

@@ -13,6 +13,7 @@ class AEditorPlayer;
 class USceneComponent;
 class UTransformGizmo;
 
+extern class UWorld* GWorld;
 
 class UWorld : public UObject
 {
@@ -26,6 +27,8 @@ public:
     void ReleaseBaseObject();
     void Tick(float DeltaTime);
     void Release();
+
+    virtual UWorld* GetWorld() const override;
 
     /**
      * World에 Actor를 Spawn합니다.
@@ -81,7 +84,7 @@ template <typename T>
     requires std::derived_from<T, AActor>
 T* UWorld::SpawnActor()
 {
-    T* Actor = FObjectFactory::ConstructObject<T>();
+    T* Actor = FObjectFactory::ConstructObject<T>(this);
     // TODO: 일단 AddComponent에서 Component마다 초기화
     // 추후에 RegisterComponent() 만들어지면 주석 해제
     // Actor->InitializeComponents();
