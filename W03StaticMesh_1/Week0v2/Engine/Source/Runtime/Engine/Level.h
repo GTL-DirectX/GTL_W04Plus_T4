@@ -48,6 +48,9 @@ public:
         return NewActor;
     }
 
+    virtual UObject* Duplicate() override;
+    virtual void DuplicateSubObjects() override;
+
 protected:
     TArray<class AActor*> Actors;
 

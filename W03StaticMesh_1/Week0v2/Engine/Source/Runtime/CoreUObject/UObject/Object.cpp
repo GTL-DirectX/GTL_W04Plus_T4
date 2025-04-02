@@ -19,23 +19,21 @@ UObject::UObject()
 {
 }
 
-void UObject::DuplicateSubObjects()
-{
-    if (SubObjectA)
-    {
-        SubObjectA = SubObjectA->Duplicate();
-    }
-    if (SubObjectB)
-    {
-        SubObjectB = SubObjectB->Duplicate();
-    }
-}
-
 UObject* UObject::Duplicate()
 {
-    UObject* NewObject = FObjectFactory::ConstructObject<UObject>();
-    NewObject->DuplicateSubObjects();
-    return NewObject;
+    UObject* NewObj = FObjectFactory::ConstructObject<UObject>();
+    NewObj->UUID = this->UUID;
+    NewObj->InternalIndex = this->InternalIndex;
+    NewObj->NamePrivate = this->NamePrivate;
+    NewObj->ClassPrivate = this->ClassPrivate;
+    NewObj->DuplicateSubObjects();
+
+    return NewObj;
+}
+
+void UObject::DuplicateSubObjects()
+{
+
 }
 
 bool UObject::IsA(const UClass* SomeBase) const
