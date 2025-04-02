@@ -229,9 +229,11 @@
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Components\UParticleSubUVComp.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Components\UText.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Components\UTextUUID.cpp" />
-    <ClCompile Include="Engine\Source\Runtime\Engine\World.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\World\World.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Components\QuadTexture.cpp" />
     <ClCompile Include="Engine\Source\ThirdParty\tinyfiledialogs\tinyfiledialogs.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Level.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\EditorEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Source\Runtime\Core\Delegates\Delegate.h" />
@@ -268,6 +270,7 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\EngineTypes.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\ResourceMgr.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\UnrealClient.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\World\WorldType.h" />
     <ClInclude Include="Engine\Source\Runtime\InteractiveToolsFramework\BaseGizmos\GizmoArrowComponent.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Camera\CameraComponent.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\UserInterface\Console.h" />
@@ -338,7 +341,9 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Components\UParticleSubUVComp.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Components\UText.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Components\UTextUUID.h" />
-    <ClInclude Include="Engine\Source\Runtime\Engine\World.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\World\World.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\Level.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\EditorEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\StaticMeshPixelShader.hlsl">

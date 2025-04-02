@@ -1,6 +1,6 @@
 #include "GizmoCircleComponent.h"
 
-#include "World.h"
+#include "World/World.h"
 #include "Math/JungleMath.h"
 #include "Actors/Player.h"
 #include "UnrealEd/EditorViewportClient.h"

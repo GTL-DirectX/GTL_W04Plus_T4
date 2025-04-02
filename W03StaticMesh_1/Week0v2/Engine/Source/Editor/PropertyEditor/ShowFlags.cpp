@@ -1,5 +1,5 @@
 #include "PropertyEditor/ShowFlags.h"
-#include "World.h"
+#include "World/World.h"
 
 ShowFlags::ShowFlags()
 {

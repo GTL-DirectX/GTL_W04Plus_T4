@@ -2,6 +2,7 @@
 
 #include "UClass.h"
 #include "UObjectHash.h"
+#include "ObjectFactory.h"
 
 
 UClass* UObject::StaticClass()
@@ -16,6 +17,25 @@ UObject::UObject()
     , InternalIndex(std::numeric_limits<uint32>::max())
     , NamePrivate("None")
 {
+}
+
+void UObject::DuplicateSubObjects()
+{
+    if (SubObjectA)
+    {
+        SubObjectA = SubObjectA->Duplicate();
+    }
+    if (SubObjectB)
+    {
+        SubObjectB = SubObjectB->Duplicate();
+    }
+}
+
+UObject* UObject::Duplicate()
+{
+    UObject* NewObject = FObjectFactory::ConstructObject<UObject>();
+    NewObject->DuplicateSubObjects();
+    return NewObject;
 }
 
 bool UObject::IsA(const UClass* SomeBase) const

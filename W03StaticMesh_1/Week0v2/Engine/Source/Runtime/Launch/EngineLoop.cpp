@@ -1,6 +1,6 @@
 #include "EngineLoop.h"
 #include "ImGuiManager.h"
-#include "World.h"
+#include "World/World.h"
 #include "Camera/CameraComponent.h"
 #include "PropertyEditor/ViewportTypePanel.h"
 #include "UnrealEd/EditorViewportClient.h"
