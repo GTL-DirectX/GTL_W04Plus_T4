@@ -45,6 +45,7 @@ public:
     }
 
     bool IsTickInEditor() const { return bTickInEditor; }
+    void SetTickInEditor(bool bInTickInEditor) { bTickInEditor = bInTickInEditor; }
 
     /**
      * Actor에 컴포넌트를 새로 추가합니다.

@@ -970,10 +970,12 @@ void FRenderer::RenderBatch(
     Graphics->DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void FRenderer::PrepareRender()
+void FRenderer::PrepareRender(EWorldType InWorldType)
 {
     for (const auto iter : TObjectRange<USceneComponent>())
     {
+        if (iter->GetWorld() && iter->GetWorld()->WorldType != InWorldType)
+            continue;
         if (UStaticMeshComponent* pStaticMeshComp = Cast<UStaticMeshComponent>(iter))
         {
             if (!Cast<UGizmoBaseComponent>(iter))

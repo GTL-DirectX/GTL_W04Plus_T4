@@ -34,16 +34,17 @@ void UWorld::Tick(float DeltaTime)
 {
     if (LocalGizmo)
         LocalGizmo->Tick(DeltaTime);
+
     if (EditorPlayer)
         EditorPlayer->Tick(DeltaTime);
 
     if (Camera)
         Camera->TickComponent(DeltaTime);
 
-    if (CurrentLevel)
-    {
-        CurrentLevel->Tick(DeltaTime);
-    }
+    //if (CurrentLevel)
+    //{
+    //    CurrentLevel->Tick(DeltaTime);
+    //}
 }
 
 void UWorld::Release()

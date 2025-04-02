@@ -1,7 +1,9 @@
 #include "EditorEngine.h"
 #include "Editor.h"
+#include "FLoaderOBJ.h"
 #include "World/World.h"
 #include "level.h"
+#include "Components/SkySphereComponent.h"
 #include "GameFramework/Actor.h"
 
 void UEditorEngine::Init()
@@ -23,35 +25,37 @@ void UEditorEngine::Tick(float DeltaSeconds)
     // Editor 전용 액터 Tick 처리
     for (FWorldContext& WorldContext : WorldContexts)
     {
-        GWorld->Tick(DeltaSeconds);
-        //UWorld* EditorWorld = WorldContext.World();
-        //EditorWorld->Tick(DeltaSeconds);
-        //if (EditorWorld && EditorWorld->WorldType == EWorldType::Editor)
-        //{
-        //    ULevel* Level = EditorWorld->GetCurrentLevel();
-        //    {
-        //        for (AActor* Actor : Level->GetActors())
-        //        {
-        //            if (Actor && Actor->IsTickInEditor())
-        //            {
-        //                Actor->Tick(DeltaSeconds);
-        //            }
-        //        }
-        //    }
-        //}
-        //else if (EditorWorld && EditorWorld->WorldType == EWorldType::PIE)
-        //{
-        //    ULevel* Level = EditorWorld->GetCurrentLevel();
-        //    {
-        //        for (AActor* Actor : Level->GetActors())
-        //        {
-        //            if (Actor)
-        //            {
-        //                Actor->Tick(DeltaSeconds);
-        //            }
-        //        }
-        //    }
-        //}
+        //GWorld->Tick(DeltaSeconds);
+        // @todo IsTickInEditor()인 경우에만 작동하는 Actor 만들기
+        UWorld* EditorWorld = WorldContext.World();
+        if (EditorWorld && EditorWorld->WorldType == EWorldType::Editor)
+        {
+            EditorWorld->Tick(DeltaSeconds);
+            ULevel* Level = EditorWorld->GetCurrentLevel();
+            {
+                for (AActor* Actor : Level->GetActors())
+                {
+                    if (Actor && Actor->IsTickInEditor())
+                    {
+                        Actor->Tick(DeltaSeconds);
+                    }
+                }
+            }
+        }
+        else if (EditorWorld && EditorWorld->WorldType == EWorldType::PIE)
+        {
+            EditorWorld->Tick(DeltaSeconds);
+            ULevel* Level = EditorWorld->GetCurrentLevel();
+            {
+                for (AActor* Actor : Level->GetActors())
+                {
+                    if (Actor)
+                    {
+                        Actor->Tick(DeltaSeconds);
+                    }
+                }
+            }
+        }
     }
 }
 
