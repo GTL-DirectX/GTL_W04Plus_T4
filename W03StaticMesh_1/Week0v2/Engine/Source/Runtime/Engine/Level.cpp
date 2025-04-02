@@ -46,7 +46,6 @@ void ULevel::Release()
     for (AActor* Actor : Actors)
     {
         Actor->EndPlay(EEndPlayReason::WorldTransition);
-        delete Actor;
 
         TSet<UActorComponent*> Components = Actor->GetComponents();
         for (UActorComponent* Component : Components)

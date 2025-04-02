@@ -32,6 +32,8 @@ void UWorld::Initialize(EWorldType InWorldType)
 
 void UWorld::Tick(float DeltaTime)
 {
+    if (LocalGizmo)
+        LocalGizmo->Tick(DeltaTime);
     if (EditorPlayer)
         EditorPlayer->Tick(DeltaTime);
 
