@@ -73,18 +73,22 @@ void UWorld::CleanupWorld()
 
 void UWorld::CreateBaseObject()
 {
-    if (!EditorPlayer)
-        EditorPlayer = FObjectFactory::ConstructObject<AEditorPlayer>();
-
-    if (!Camera)
+    if (EditorPlayer == nullptr)
     {
-        Camera = FObjectFactory::ConstructObject<UCameraComponent>();
-        Camera->SetLocation(FVector(8.0f, 8.0f, 8.f));
-        Camera->SetRotation(FVector(0.0f, 45.0f, -135.0f));
+        EditorPlayer = FObjectFactory::ConstructObject<AEditorPlayer>(this);
+    }
+
+    if (camera == nullptr)
+    {
+        camera = FObjectFactory::ConstructObject<UCameraComponent>(this);
+        camera->SetLocation(FVector(8.0f, 8.0f, 8.f));
+        camera->SetRotation(FVector(0.0f, 45.0f, -135.0f));
     }
 
     if (LocalGizmo == nullptr)
-        LocalGizmo = FObjectFactory::ConstructObject<UTransformGizmo>();
+    {
+        LocalGizmo = FObjectFactory::ConstructObject<UTransformGizmo>(this);
+    }
 }
 
 void UWorld::ReleaseBaseObject()
@@ -95,10 +99,16 @@ void UWorld::ReleaseBaseObject()
         LocalGizmo = nullptr;
     }
 
-    if (Camera)
+    if (worldGizmo)
     {
-        delete Camera;
-        Camera = nullptr;
+        delete worldGizmo;
+        worldGizmo = nullptr;
+    }
+
+    if (camera)
+    {
+        delete camera;
+        camera = nullptr;
     }
 
     if (EditorPlayer)
@@ -106,13 +116,7 @@ void UWorld::ReleaseBaseObject()
         delete EditorPlayer;
         EditorPlayer = nullptr;
     }
-
-    if (PickingGizmo)
-    {
-        PickingGizmo = nullptr;
-    }
 }
-
 
 void UWorld::SetPickingGizmo(UObject* Object)
 {

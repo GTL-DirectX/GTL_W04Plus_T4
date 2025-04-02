@@ -12,6 +12,9 @@
 #include "Camera/CameraComponent.h"
 #include "UObject/Casts.h"
 
+#include "Engine/Engine.h"
+#include "World/World.h"
+
 using json = nlohmann::json;
 
 SceneData FSceneMgr::ParseSceneData(const FString& jsonStr)
@@ -36,27 +39,27 @@ SceneData FSceneMgr::ParseSceneData(const FString& jsonStr)
                 const FString TypeName = value["Type"].get<std::string>();
                 if (TypeName == USphereComp::StaticClass()->GetName())
                 {
-                    obj = FObjectFactory::ConstructObject<USphereComp>();
+                    obj = FObjectFactory::ConstructObject<USphereComp>(GWorld);
                 }
                 else if (TypeName == UCubeComp::StaticClass()->GetName())
                 {
-                    obj = FObjectFactory::ConstructObject<UCubeComp>();
+                    obj = FObjectFactory::ConstructObject<UCubeComp>(GWorld);
                 }
                 else if (TypeName == UGizmoArrowComponent::StaticClass()->GetName())
                 {
-                    obj = FObjectFactory::ConstructObject<UGizmoArrowComponent>();
+                    obj = FObjectFactory::ConstructObject<UGizmoArrowComponent>(GWorld);
                 }
                 else if (TypeName == UBillboardComponent::StaticClass()->GetName())
                 {
-                    obj = FObjectFactory::ConstructObject<UBillboardComponent>();
+                    obj = FObjectFactory::ConstructObject<UBillboardComponent>(GWorld);
                 }
                 else if (TypeName == ULightComponentBase::StaticClass()->GetName())
                 {
-                    obj = FObjectFactory::ConstructObject<ULightComponentBase>();
+                    obj = FObjectFactory::ConstructObject<ULightComponentBase>(GWorld);
                 }
                 else if (TypeName == USkySphereComponent::StaticClass()->GetName())
                 {
-                    obj = FObjectFactory::ConstructObject<USkySphereComponent>();
+                    obj = FObjectFactory::ConstructObject<USkySphereComponent>(GWorld);
                     USkySphereComponent* skySphere = static_cast<USkySphereComponent*>(obj);
                 }
             }
@@ -90,7 +93,7 @@ SceneData FSceneMgr::ParseSceneData(const FString& jsonStr)
         for (auto it = perspectiveCamera.begin(); it != perspectiveCamera.end(); ++it) {
             int id = std::stoi(it.key());  // Key는 문자열, 숫자로 변환
             const json& value = it.value();
-            UObject* obj = FObjectFactory::ConstructObject<UCameraComponent>();
+            UObject* obj = FObjectFactory::ConstructObject<UCameraComponent>(GEngine);
             UCameraComponent* camera = static_cast<UCameraComponent*>(obj);
             if (value.contains("Location")) camera->SetLocation(FVector(value["Location"].get<std::vector<float>>()[0],
                     value["Location"].get<std::vector<float>>()[1],

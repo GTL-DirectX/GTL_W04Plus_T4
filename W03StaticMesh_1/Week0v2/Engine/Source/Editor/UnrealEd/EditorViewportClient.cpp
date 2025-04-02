@@ -123,7 +123,7 @@ void FEditorViewportClient::Input()
     // Focus Selected Actor
     if (GetAsyncKeyState('F') & 0x8000)
     {
-        if (AActor* PickedActor = GEngineLoop.GetWorld()->GetLevel()->GetSelectedActor())
+        if (AActor* PickedActor = GWorld->GetLevel()->GetSelectedActor())
         {
             FViewportCameraTransform& ViewTransform = ViewTransformPerspective;
             ViewTransform.SetLocation(

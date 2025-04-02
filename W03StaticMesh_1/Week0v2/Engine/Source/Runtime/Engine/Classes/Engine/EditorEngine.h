@@ -1,20 +1,22 @@
 #pragma once
 
-#include "UObject/Object.h"
-#include "UObject/ObjectMacros.h"
+#include "Engine.h"
 
-struct FWorldContext
+class UEditorEngine : public UEngine
 {
-
-};
-
-class UEditorEngine : public UObject
-{
-    DECLARE_CLASS(UEditorEngine, UObject)
+    DECLARE_CLASS(UEditorEngine, UEngine)
 
 public:
-    //TArray<FWorldContext> WorldContexts;
+    UEditorEngine() = default;
 
-    virtual void Tick(float DeltaSeconds);
+public:
+    virtual void Init() override;
+    virtual void Tick(float DeltaSeconds) override;
+
+    FWorldContext* GetWorldContext(EWorldType InType, const FString& InName);
+
+    UWorld* PlayWorld;
+    UWorld* EditorWorld;
+
 };
 

@@ -10,6 +10,8 @@
 #include "LevelEditor/SLevelEditor.h"
 #include "CoreUObject/UObject/UObjectArray.h"
 
+#include "Engine/EditorEngine.h"
+
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -97,7 +99,6 @@ uint32 FEngineLoop::TotalAllocationCount = 0;
 FEngineLoop::FEngineLoop()
     : hWnd(nullptr)
     , UIMgr(nullptr)
-    , GWorld(nullptr)
     , LevelEditor(nullptr)
     , UnrealEditor(nullptr)
 {
@@ -121,12 +122,12 @@ int32 FEngineLoop::Init(HINSTANCE hInstance)
     UIMgr = new UImGuiManager;
     UIMgr->Initialize(hWnd, graphicDevice.Device, graphicDevice.DeviceContext);
 
+    GEngine = FObjectFactory::ConstructObject<UEditorEngine>(nullptr);
+    GEngine->Init();
+
     resourceMgr.Initialize(&renderer, &graphicDevice);
     LevelEditor = new SLevelEditor();
     LevelEditor->Initialize();
-
-    GWorld = new UWorld;
-    GWorld->Initialize();
 
     return 0;
 }
@@ -148,7 +149,7 @@ void FEngineLoop::Render()
             // renderer.UpdateLightBuffer();
             // RenderWorld();
             renderer.PrepareRender();
-            renderer.Render(GetWorld(),LevelEditor->GetActiveViewportClient());
+            renderer.Render(GWorld,LevelEditor->GetActiveViewportClient());
         }
         GetLevelEditor()->SetViewportClient(viewportClient);
     }
@@ -161,7 +162,7 @@ void FEngineLoop::Render()
         // renderer.UpdateLightBuffer();
         // RenderWorld();
         renderer.PrepareRender();
-        renderer.Render(GetWorld(),LevelEditor->GetActiveViewportClient());
+        renderer.Render(GWorld,LevelEditor->GetActiveViewportClient());
     }
 }
 
@@ -193,7 +194,7 @@ void FEngineLoop::Tick()
         }
 
         Input();
-        GWorld->Tick(elapsedTime);
+        GEngine->Tick(elapsedTime);
         LevelEditor->Tick(elapsedTime);
         Render();
         UIMgr->BeginFrame();
@@ -248,8 +249,6 @@ void FEngineLoop::Input()
 void FEngineLoop::Exit()
 {
     LevelEditor->Release();
-    GWorld->Release();
-    delete GWorld;
     UIMgr->Shutdown();
     delete UIMgr;
     resourceMgr.Release(&renderer);

@@ -1,4 +1,5 @@
 #pragma once
+#include "WorldType.h"
 #include "UObject/ObjectMacros.h"
 
 class AActor;
@@ -9,13 +10,7 @@ class AEditorPlayer;
 class USceneComponent;
 class UTransformGizmo;
 
-enum EWorldType
-{
-    Editor,
-    EditorPreview,
-    PIE,
-    Game,
-};
+extern class UWorld* GWorld;
 
 class UWorld : public UObject
 {

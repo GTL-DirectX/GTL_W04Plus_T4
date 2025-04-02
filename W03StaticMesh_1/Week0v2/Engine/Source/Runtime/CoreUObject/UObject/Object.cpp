@@ -33,9 +33,18 @@ void UObject::DuplicateSubObjects()
 
 UObject* UObject::Duplicate()
 {
-    UObject* NewObject = FObjectFactory::ConstructObject<UObject>();
+    UObject* NewObject = FObjectFactory::ConstructObject<UObject>(OuterPrivate);
     NewObject->DuplicateSubObjects();
     return NewObject;
+}
+
+UWorld* UObject::GetWorld() const
+{
+    if (UObject* Outer = GetOuter())
+    {
+        return Outer->GetWorld();
+    }
+    return nullptr;
 }
 
 bool UObject::IsA(const UClass* SomeBase) const
