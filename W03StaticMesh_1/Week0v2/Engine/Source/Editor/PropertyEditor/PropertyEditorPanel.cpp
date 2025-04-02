@@ -47,9 +47,40 @@ void PropertyEditorPanel::Render()
     {
         ImGui::SetItemDefaultFocus();
 
-        if (ImGui::Button("Add"))
+        static int AddIndex = 0;
+        
+        ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 85.0f);
+        if (ImGui::Button("Add", ImVec2(80.0f, 32.0f)))
         {
-            PickedActor->AddComponent<UStaticMeshComponent>();
+            if (AddIndex == 0)
+            {
+                PickedActor->AddComponent<UStaticMeshComponent>();
+            }
+
+            if (AddIndex == 1)
+            {
+                auto Bill = PickedActor->AddComponent<UBillboardComponent>();
+                Bill->SetTexture(L"Assets/Texture/emart.png");
+            }
+
+            if (AddIndex == 2)
+            {
+                PickedActor->AddComponent<ULightComponentComponent>();
+            }
+            AddIndex++;
+        }
+
+        
+        if (ImGui::TreeNodeEx(*PickedActor->GetName(), ImGuiTreeNodeFlags_Framed| ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
+        {
+            for (const auto ActorComp : PickedActor->GetComponents())
+            {
+                if (ImGui::Selectable(*ActorComp->GetName()))
+                {
+                }
+            }
+
+            ImGui::TreePop();
         }
         
         // TreeNode 배경색을 변경 (기본 상태)
@@ -219,6 +250,24 @@ void PropertyEditorPanel::Render()
         {
             RenderForStaticMesh(StaticMeshComp);
             RenderForMaterial(StaticMeshComp);
+        }
+    }
+
+    if (PickedActor)
+    {
+        UBillboardComponent* BillboardComp = nullptr;
+        for (const auto Component : PickedActor->GetComponents())
+        {
+            if (UBillboardComponent* Comp = Cast<UBillboardComponent>(Component))
+            {
+                BillboardComp = Comp;
+                break;
+            }
+        }
+
+        if (BillboardComp)
+        {
+            RenderBillboard(BillboardComp);
         }
     }
     ImGui::End();
@@ -586,6 +635,33 @@ void PropertyEditorPanel::RenderCreateMaterialView()
     }
 
     ImGui::End();
+}
+
+void PropertyEditorPanel::RenderBillboard(UBillboardComponent* BillboardComp)
+{
+
+    if (ImGui::TreeNodeEx("Sprite", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
+    {
+        FWString PreviewName = BillboardComp->TextureName;
+        std::string ConvertPreviewName(PreviewName.begin(), PreviewName.end());
+        const TMap<FWString, std::shared_ptr<FTexture>> Textures = FEngineLoop::resourceMgr.GetTextures();
+    
+        if (ImGui::BeginCombo("##Sprite", ConvertPreviewName.c_str(), ImGuiComboFlags_None))
+        {
+            for (auto Sprite : Textures)
+            {
+                std::string ss(Sprite.Key.begin(), Sprite.Key.end());
+                if (ImGui::Selectable(ss.c_str()))
+                {
+                    BillboardComp->SetTexture(Sprite.Key);
+                }
+            }
+
+            ImGui::EndCombo();
+        }
+        ImGui::TreePop();
+    }
+
 }
 
 void PropertyEditorPanel::OnResize(HWND hWnd)

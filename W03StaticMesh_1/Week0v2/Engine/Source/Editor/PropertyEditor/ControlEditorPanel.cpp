@@ -239,6 +239,24 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
     }
     ImGui::PopFont();
 
+    ImGui::SameLine();
+    
+    ImGui::PushFont(IconFont);
+    if (ImGui::Button("\ue9a8", ButtonSize))
+    {
+        
+    }
+    ImGui::PopFont();
+
+    ImGui::SameLine();
+    
+    ImGui::PushFont(IconFont);
+    if (ImGui::Button("\ue9e4", ButtonSize))
+    {
+        
+    }
+    ImGui::PopFont();
+    
     if (ImGui::BeginPopup("PrimitiveControl"))
     {
         struct Primitive {
@@ -427,7 +445,7 @@ void ControlEditorPanel::CreateFlagButton() const
 void ControlEditorPanel::CreateSRTButton(ImVec2 ButtonSize) const
 {
     AEditorPlayer* Player = GEngineLoop.GetWorld()->GetEditorPlayer();
-
+    
     ImVec4 ActiveColor = ImVec4(0.00f, 0.00f, 0.85f, 1.0f);
     
     ControlMode ControlMode = Player->GetControlMode();
