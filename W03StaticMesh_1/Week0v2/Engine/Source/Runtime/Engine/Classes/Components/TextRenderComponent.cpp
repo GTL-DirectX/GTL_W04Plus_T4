@@ -1,16 +1,16 @@
-#include "UText.h"
+#include "TextRenderComponent.h"
 
 #include "World/World.h"
 #include "Engine/Source/Editor/PropertyEditor/ShowFlags.h"
 #include "UnrealEd/EditorViewportClient.h"
 #include "LevelEditor/SLevelEditor.h"
 
-UText::UText()
+UTextRenderComponent::UTextRenderComponent()
 {
     SetType(StaticClass()->GetName());
 }
 
-UText::~UText()
+UTextRenderComponent::~UTextRenderComponent()
 {
 	if (vertexTextBuffer)
 	{
@@ -19,38 +19,27 @@ UText::~UText()
 	}
 }
 
-void UText::InitializeComponent()
+void UTextRenderComponent::InitializeComponent()
 {
     Super::InitializeComponent();
 }
 
-void UText::TickComponent(float DeltaTime)
+void UTextRenderComponent::TickComponent(float DeltaTime)
 {
 	Super::TickComponent(DeltaTime);
-
-    //FVector newCamera = GetWorld()->GetCamera()->GetForwardVector();
-    //newCamera.z = 0;
-    //newCamera = newCamera.Normalize();
-    //float tmp = FVector(1.0f, 0.0f, 0.0f).Dot(newCamera);
-    //float rad = acosf(tmp);
-    //float degree = JungleMath::RadToDeg(rad);
-    //FVector vtmp = FVector(1.0f, 0.0f, 0.0f).Cross(GetWorld()->GetCamera()->GetForwardVector());
-    //if (vtmp.z < 0)
-    //	degree *= -1;
-    //RelativeRotation.z = degree + 90;
 }
 
-void UText::ClearText()
+void UTextRenderComponent::ClearText()
 {
     vertexTextureArr.Empty();
 }
-void UText::SetRowColumnCount(int _cellsPerRow, int _cellsPerColumn) 
+void UTextRenderComponent::SetRowColumnCount(int _cellsPerRow, int _cellsPerColumn) 
 {
     RowCount = _cellsPerRow;
     ColumnCount = _cellsPerColumn;
 }
 
-int UText::CheckRayIntersection(FVector& rayOrigin, FVector& rayDirection, float& pfNearHitDistance)
+int UTextRenderComponent::CheckRayIntersection(FVector& rayOrigin, FVector& rayDirection, float& pfNearHitDistance)
 {
 	if (!(ShowFlags::GetInstance().currentFlags & static_cast<uint64>(EEngineShowFlags::SF_BillboardText))) {
 		return 0;
@@ -65,7 +54,7 @@ int UText::CheckRayIntersection(FVector& rayOrigin, FVector& rayDirection, float
 }
 
 
-void UText::SetText(FWString _text)
+void UTextRenderComponent::SetText(FWString _text)
 {
 	text = _text;
 	if (_text.empty())
@@ -141,7 +130,7 @@ void UText::SetText(FWString _text)
 
 	CreateTextTextureVertexBuffer(vertexTextureArr,byteWidth);
 }
-void UText::setStartUV(wchar_t hangul, float& outStartU, float& outStartV)
+void UTextRenderComponent::setStartUV(wchar_t hangul, float& outStartU, float& outStartV)
 {
     //대문자만 받는중
     int StartU = 0;
@@ -188,7 +177,7 @@ void UText::setStartUV(wchar_t hangul, float& outStartU, float& outStartV)
     outStartU = static_cast<float>(offsetU);
     outStartV = static_cast<float>(StartV + offsetV);
 }
-void UText::setStartUV(char alphabet, float& outStartU, float& outStartV)
+void UTextRenderComponent::setStartUV(char alphabet, float& outStartU, float& outStartV)
 {
     //대문자만 받는중
     int StartU=0;
@@ -231,7 +220,7 @@ void UText::setStartUV(char alphabet, float& outStartU, float& outStartV)
     outStartV = static_cast<float>(StartV + offsetV);
 
 }
-void UText::CreateTextTextureVertexBuffer(const TArray<FVertexTexture>& _vertex,UINT byteWidth)
+void UTextRenderComponent::CreateTextTextureVertexBuffer(const TArray<FVertexTexture>& _vertex,UINT byteWidth)
 {
 	numTextVertices = static_cast<UINT>(_vertex.Num());
 	// 2. Create a vertex buffer
@@ -250,34 +239,4 @@ void UText::CreateTextTextureVertexBuffer(const TArray<FVertexTexture>& _vertex,
 		UE_LOG(LogLevel::Warning, "VertexBuffer Creation faild");
 	}
 	vertexTextBuffer = vertexBuffer;
-
-	//FEngineLoop::resourceMgr.RegisterMesh(&FEngineLoop::renderer, "JungleText", _vertex, _vertex.Num() * sizeof(FVertexTexture),
-	//	nullptr, 0);
-
-}
-
-
-void UText::TextMVPRendering()
-{
-    FEngineLoop::renderer.PrepareTextureShader();
-    //FEngineLoop::renderer.UpdateSubUVConstant(0, 0);
-    //FEngineLoop::renderer.PrepareSubUVConstant();
-    FMatrix Model = CreateBillboardMatrix();
-
-    FMatrix MVP = Model * GetEngine().GetLevelEditor()->GetActiveViewportClient()->GetViewMatrix() * GetEngine().GetLevelEditor()->GetActiveViewportClient()->GetProjectionMatrix();
-    FMatrix NormalMatrix = FMatrix::Transpose(FMatrix::Inverse(Model));
-    FVector4 UUIDColor = EncodeUUID() / 255.0f;
-    if (this == GetWorld()->GetPickingGizmo()) {
-        FEngineLoop::renderer.UpdateConstant(MVP, NormalMatrix, UUIDColor, true);
-    }
-    else
-        FEngineLoop::renderer.UpdateConstant(MVP, NormalMatrix, UUIDColor, false);
-
-    if (ShowFlags::GetInstance().currentFlags & static_cast<uint64>(EEngineShowFlags::SF_BillboardText)) {
-        FEngineLoop::renderer.RenderTextPrimitive(vertexTextBuffer, numTextVertices,
-            Texture->TextureSRV, Texture->SamplerState);
-    }
-    //Super::Render();
-
-    FEngineLoop::renderer.PrepareShader();
 }

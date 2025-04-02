@@ -9,7 +9,7 @@
 #include "Define.h"
 #include "Container/Set.h"
 
-class ULightComponentBase;
+class ULightComponentComponent;
 class UWorld;
 class FGraphicsDevice;
 class UMaterial;
@@ -147,7 +147,7 @@ private:
     TArray<UStaticMeshComponent*> StaticMeshObjs;
     TArray<UGizmoBaseComponent*> GizmoObjs;
     TArray<UBillboardComponent*> BillboardObjs;
-    TArray<ULightComponentBase*> LightObjs;
+    TArray<ULightComponentComponent*> LightObjs;
 
 public:
     ID3D11VertexShader* VertexLineShader = nullptr;

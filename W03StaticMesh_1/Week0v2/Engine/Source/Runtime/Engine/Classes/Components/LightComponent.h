@@ -3,13 +3,13 @@
 #include "Define.h"
 class UBillboardComponent;
 
-class ULightComponentBase : public USceneComponent
+class ULightComponentComponent : public USceneComponent
 {
-    DECLARE_CLASS(ULightComponentBase, USceneComponent)
+    DECLARE_CLASS(ULightComponentComponent, USceneComponent)
 
 public:
-    ULightComponentBase();
-    virtual ~ULightComponentBase() override;
+    ULightComponentComponent();
+    virtual ~ULightComponentComponent() override;
 
     virtual void TickComponent(float DeltaTime) override;
     virtual int CheckRayIntersection(FVector& rayOrigin, FVector& rayDirection, float& pfNearHitDistance);
@@ -24,6 +24,7 @@ private:
     float radius;
     FBoundingBox AABB;
     UBillboardComponent* texture2D;
+    
 public:
     FBoundingBox GetBoundingBox() const {return AABB;}
     float GetRadius() {return radius;}

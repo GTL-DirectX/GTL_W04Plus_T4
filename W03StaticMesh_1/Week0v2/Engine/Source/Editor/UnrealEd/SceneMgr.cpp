@@ -50,9 +50,9 @@ SceneData FSceneMgr::ParseSceneData(const FString& jsonStr)
                 {
                     obj = FObjectFactory::ConstructObject<UBillboardComponent>();
                 }
-                else if (TypeName == ULightComponentBase::StaticClass()->GetName())
+                else if (TypeName == ULightComponentComponent::StaticClass()->GetName())
                 {
-                    obj = FObjectFactory::ConstructObject<ULightComponentBase>();
+                    obj = FObjectFactory::ConstructObject<ULightComponentComponent>();
                 }
                 else if (TypeName == USkySphereComponent::StaticClass()->GetName())
                 {
