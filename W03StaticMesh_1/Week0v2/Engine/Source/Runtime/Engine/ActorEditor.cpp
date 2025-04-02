@@ -1,4 +1,5 @@
-﻿#include "GameFramework/Actor.h"
+#include "GameFramework/Actor.h"
+#include "Engine/Source/Runtime/CoreUObject/UObject/UClass.h"
 
 
 #if 1 // TODO: WITH_EDITOR 추가

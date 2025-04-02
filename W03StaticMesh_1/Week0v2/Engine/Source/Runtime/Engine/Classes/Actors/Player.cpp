@@ -14,6 +14,7 @@
 #include "PropertyEditor/ShowFlags.h"
 #include "UnrealEd/EditorViewportClient.h"
 #include "UObject/UObjectIterator.h"
+#include "Runtime/Engine/Level.h"
 
 
 using namespace DirectX;
@@ -118,11 +119,11 @@ void AEditorPlayer::Input()
 
     if (GetAsyncKeyState(VK_DELETE) & 0x8000)
     {
-        UWorld* World = GetWorld();
-        if (AActor* PickedActor = World->GetSelectedActor())
+        ULevel* Level = GetWorld()->GetLevel();
+        if (AActor* PickedActor = Level->GetSelectedActor())
         {
-            World->DestroyActor(PickedActor);
-            World->SetPickedActor(nullptr);
+            Level->RemoveActor(PickedActor);
+            Level->SetPickedActor(nullptr);
         }
     }
 }
@@ -130,11 +131,11 @@ void AEditorPlayer::Input()
 bool AEditorPlayer::PickGizmo(FVector& pickPosition)
 {
     bool isPickedGizmo = false;
-    if (GetWorld()->GetSelectedActor())
+    if (GetWorld()->GetLevel()->GetSelectedActor())
     {
         if (cMode == CM_TRANSLATION)
         {
-            for (auto iter : GetWorld()->LocalGizmo->GetArrowArr())
+            for (auto iter : GetWorld()->GetLocalGizmo()->GetArrowArr())
             {
                 int maxIntersect = 0;
                 float minDistance = FLT_MAX;
@@ -161,7 +162,7 @@ bool AEditorPlayer::PickGizmo(FVector& pickPosition)
         }
         else if (cMode == CM_ROTATION)
         {
-            for (auto iter : GetWorld()->LocalGizmo->GetDiscArr())
+            for (auto iter : GetWorld()->GetLocalGizmo()->GetDiscArr())
             {
                 int maxIntersect = 0;
                 float minDistance = FLT_MAX;
@@ -189,7 +190,7 @@ bool AEditorPlayer::PickGizmo(FVector& pickPosition)
         }
         else if (cMode == CM_SCALE)
         {
-            for (auto iter : GetWorld()->LocalGizmo->GetScaleArr())
+            for (auto iter : GetWorld()->GetLocalGizmo()->GetScaleArr())
             {
                 int maxIntersect = 0;
                 float minDistance = FLT_MAX;
@@ -259,7 +260,7 @@ void AEditorPlayer::PickActor(const FVector& pickPosition)
     }
     if (Possible)
     {
-        GetWorld()->SetPickedActor(Possible->GetOwner());
+        GetWorld()->GetLevel()->SetPickedActor(Possible->GetOwner());
     }
 }
 
@@ -349,7 +350,7 @@ int AEditorPlayer::RayIntersectsObject(const FVector& pickPosition, USceneCompon
 
 void AEditorPlayer::PickedObjControl()
 {
-    if (GetWorld()->GetSelectedActor() && GetWorld()->GetPickingGizmo())
+    if (GetWorld()->GetLevel()->GetSelectedActor() && GetWorld()->GetPickingGizmo())
     {
         POINT currentMousePos;
         GetCursorPos(&currentMousePos);
@@ -357,7 +358,7 @@ void AEditorPlayer::PickedObjControl()
         int32 deltaY = currentMousePos.y - m_LastMousePos.y;
 
         // USceneComponent* pObj = GetWorld()->GetPickingObj();
-        AActor* PickedActor = GetWorld()->GetSelectedActor();
+        AActor* PickedActor = GetWorld()->GetLevel()->GetSelectedActor();
         UGizmoBaseComponent* Gizmo = static_cast<UGizmoBaseComponent*>(GetWorld()->GetPickingGizmo());
         switch (cMode)
         {

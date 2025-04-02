@@ -5,8 +5,8 @@
 extern FEngineLoop GEngineLoop;
 
 class UClass;
+class ULevel;
 class UWorld;
-
 
 class UObject
 {

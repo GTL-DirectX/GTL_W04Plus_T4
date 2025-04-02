@@ -95,7 +95,9 @@ private:
 
     /** 본인이 소유하고 있는 컴포넌트들의 정보 */
     TSet<UActorComponent*> OwnedComponents;
-
+    
+    // Tick 활성화 여부
+    bool bTickEnabled;
 
     // Editor 안에서 Tick을 할 지 여부.
     bool bTickInEditor;
@@ -113,6 +115,12 @@ public:
 
     /** Actor의 Label을 설정합니다. */
     void SetActorLabel(const FString& NewActorLabel);
+
+    // Tick 실행 여부 반환 함수
+    bool IsActorTickEnabled() const
+    {
+        return bTickEnabled;
+    }
 
 private:
     /** 에디터상에 보이는 Actor의 이름 */

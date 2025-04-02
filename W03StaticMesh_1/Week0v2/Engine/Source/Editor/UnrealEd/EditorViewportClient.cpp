@@ -7,6 +7,7 @@
 #include "UnrealClient.h"
 #include "World/World.h"
 #include "GameFramework/Actor.h"
+#include "Runtime/Engine/Level.h"
 
 FVector FEditorViewportClient::Pivot = FVector(0.0f, 0.0f, 0.0f);
 float FEditorViewportClient::orthoSize = 10.0f;
@@ -122,7 +123,7 @@ void FEditorViewportClient::Input()
     // Focus Selected Actor
     if (GetAsyncKeyState('F') & 0x8000)
     {
-        if (AActor* PickedActor = GEngineLoop.GetWorld()->GetSelectedActor())
+        if (AActor* PickedActor = GEngineLoop.GetWorld()->GetLevel()->GetSelectedActor())
         {
             FViewportCameraTransform& ViewTransform = ViewTransformPerspective;
             ViewTransform.SetLocation(

@@ -6,6 +6,7 @@
 #include "GizmoRectangleComponent.h"
 #include "World/World.h"
 #include "Engine/FLoaderOBJ.h"
+#include "Runtime/Engine/Level.h"
 
 UTransformGizmo::UTransformGizmo()
 {
@@ -82,7 +83,7 @@ void UTransformGizmo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if (const AActor* PickedActor = GetWorld()->GetSelectedActor())
+    if (const AActor* PickedActor = GetWorld()->GetLevel()->GetSelectedActor())
     {
         SetActorLocation(PickedActor->GetActorLocation());
         if (GetWorld()->GetEditorPlayer()->GetCoordiMode() == CoordiMode::CDM_LOCAL)

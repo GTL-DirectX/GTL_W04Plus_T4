@@ -14,6 +14,7 @@
 #include "tinyfiledialogs/tinyfiledialogs.h"
 #include "UnrealEd/EditorViewportClient.h"
 #include "PropertyEditor/ShowFlags.h"
+#include "Runtime/Engine/Level.h"
 
 void ControlEditorPanel::Render()
 {
@@ -258,20 +259,21 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
             if (ImGui::Selectable(primitive.label))
             {
                 // GEngineLoop.GetWorld()->SpawnObject(static_cast<OBJECTS>(primitive.obj));
-                UWorld* World = GEngineLoop.GetWorld();
+                ULevel* Level = GEngineLoop.GetWorld()->GetLevel();
+
                 AActor* SpawnedActor = nullptr;
                 switch (static_cast<OBJECTS>(primitive.obj))
                 {
                 case OBJ_SPHERE:
                 {
-                    SpawnedActor = World->SpawnActor<AActor>();
+                    SpawnedActor = Level->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_SPHERE"));
                     SpawnedActor->AddComponent<USphereComp>();
                     break;
                 }
                 case OBJ_CUBE:
                 {
-                    AStaticMeshActor* TempActor = World->SpawnActor<AStaticMeshActor>();
+                    AStaticMeshActor* TempActor = Level->SpawnActor<AStaticMeshActor>();
                     TempActor->SetActorLabel(TEXT("OBJ_CUBE"));
                     UStaticMeshComponent* MeshComp = TempActor->GetStaticMeshComponent();
                     FManagerOBJ::CreateStaticMesh("Assets/helloBlender.obj");
@@ -280,14 +282,14 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
                 }
                 case OBJ_SpotLight:
                 {
-                    SpawnedActor = World->SpawnActor<AActor>();
+                    SpawnedActor = Level->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_SpotLight"));
                     SpawnedActor->AddComponent<ULightComponentBase>();
                     break;
                 }
                 case OBJ_PARTICLE:
                 {
-                    SpawnedActor = World->SpawnActor<AActor>();
+                    SpawnedActor = Level->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_PARTICLE"));
                     UParticleSubUVComp* ParticleComponent = SpawnedActor->AddComponent<UParticleSubUVComp>();
                     ParticleComponent->SetTexture(L"Assets/Texture/T_Explosion_SubUV.png");
@@ -298,7 +300,7 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
                 }
                 case OBJ_Text:
                 {
-                    SpawnedActor = World->SpawnActor<AActor>();
+                    SpawnedActor = Level->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_Text"));
                     UText* TextComponent = SpawnedActor->AddComponent<UText>();
                     TextComponent->SetTexture(L"Assets/Texture/font.png");
@@ -315,7 +317,7 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
         
                 if (SpawnedActor)
                 {
-                    World->SetPickedActor(SpawnedActor);
+                    Level->SetPickedActor(SpawnedActor);
                 }
             }
         }

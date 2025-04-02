@@ -1,6 +1,7 @@
 #include "Actor.h"
 
 #include "World/World.h"
+#include "Runtime/Engine/Level.h"
 
 void AActor::BeginPlay()
 {
@@ -16,10 +17,10 @@ void AActor::Tick(float DeltaTime)
 {
     // TODO: 임시로 Actor에서 Tick 돌리기
     // TODO: 나중에 삭제를 Pending으로 하던가 해서 복사비용 줄이기
-    const auto CopyComponents = OwnedComponents;
-    for (UActorComponent* Comp : CopyComponents)
+    for (UActorComponent* Component : OwnedComponents)
     {
-        Comp->TickComponent(DeltaTime);
+        if (Component && Component->IsComponentTickEnabled())
+            Component->TickComponent(DeltaTime);
     }
 }
 
@@ -46,9 +47,9 @@ bool AActor::Destroy()
 {
     if (!IsActorBeingDestroyed())
     {
-        if (UWorld* World = GetWorld())
+        if (ULevel* Level = GetWorld()->GetLevel())
         {
-            World->DestroyActor(this);
+            Level->RemoveActor(this);
             bActorIsBeingDestroyed = true;
         }
     }
