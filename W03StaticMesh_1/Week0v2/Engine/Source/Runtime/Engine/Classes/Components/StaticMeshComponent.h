@@ -27,6 +27,9 @@ public:
         AABB = FBoundingBox(staticMesh->GetRenderData()->BoundingBoxMin, staticMesh->GetRenderData()->BoundingBoxMax);
     }
 
+    virtual UObject* Duplicate() override;
+    virtual void DuplicateSubObjects() override;
+
 protected:
     UStaticMesh* staticMesh = nullptr;
     int selectedSubMeshIndex = -1;

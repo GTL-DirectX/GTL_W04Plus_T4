@@ -1,4 +1,5 @@
 #include "PrimitiveComponent.h"
+#include "CoreUObject/UObject/ObjectFactory.h"
 
 UPrimitiveComponent::UPrimitiveComponent()
 {
@@ -95,4 +96,20 @@ bool UPrimitiveComponent::IntersectRayTriangle(const FVector& rayOrigin, const F
     }
 
     return false;
+}
+
+UObject* UPrimitiveComponent::Duplicate()
+{
+    UPrimitiveComponent* NewObj = FObjectFactory::ConstructObject<UPrimitiveComponent>();
+
+    NewObj->AABB = this->AABB;
+    NewObj->m_Type = this->m_Type;
+
+    NewObj->DuplicateSubObjects();
+    return NewObj;
+}
+
+void UPrimitiveComponent::DuplicateSubObjects()
+{
+    Super::DuplicateSubObjects();
 }

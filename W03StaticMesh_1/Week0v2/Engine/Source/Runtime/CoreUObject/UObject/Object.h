@@ -39,16 +39,8 @@ public:
     virtual ~UObject() = default;
 
 public:
-
-    UObject* ObjectA;
-    UObject* ObjectB;
-
-    UObject* SubObjectA;
-    UObject* SubObjectB;
-
-    virtual void DuplicateSubObjects();
-
     virtual UObject* Duplicate();
+    virtual void DuplicateSubObjects();
 
 public:
 

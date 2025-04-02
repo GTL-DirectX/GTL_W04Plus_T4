@@ -125,3 +125,29 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent)
         InParent->AttachChildren.AddUnique(this);
     }
 }
+
+UObject* USceneComponent::Duplicate()
+{
+    USceneComponent* NewObj = FObjectFactory::ConstructObject<USceneComponent>();
+
+    NewObj->RelativeLocation = this->RelativeLocation;
+    NewObj->RelativeRotation = this->RelativeRotation;
+    NewObj->QuatRotation = this->QuatRotation;
+    NewObj->RelativeScale3D = this->RelativeScale3D;
+    NewObj->uuidText = this->uuidText;
+
+    NewObj->DuplicateSubObjects();
+
+    return NewObj;
+}
+
+
+void USceneComponent::DuplicateSubObjects()
+{
+    if (uuidText)
+    {
+        uuidText = static_cast<UTextUUID*>(uuidText->Duplicate());
+    }
+
+    Super::DuplicateSubObjects();
+}

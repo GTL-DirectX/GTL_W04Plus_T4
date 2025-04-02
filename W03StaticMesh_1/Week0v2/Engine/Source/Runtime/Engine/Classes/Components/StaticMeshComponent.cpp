@@ -111,3 +111,17 @@ int UStaticMeshComponent::CheckRayIntersection(FVector& rayOrigin, FVector& rayD
     }
     return nIntersections;
 }
+
+UObject* UStaticMeshComponent::Duplicate()
+{
+    UStaticMeshComponent* NewObj = FObjectFactory::ConstructObject<UStaticMeshComponent>();
+    NewObj->selectedSubMeshIndex = this->selectedSubMeshIndex;
+    NewObj->staticMesh = this->staticMesh;
+
+    return NewObj;
+}
+
+void UStaticMeshComponent::DuplicateSubObjects()
+{
+    Super::DuplicateSubObjects();
+}

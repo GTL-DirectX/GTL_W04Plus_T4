@@ -46,6 +46,9 @@ public:
     void SetScale(FVector _newScale) { RelativeScale3D = _newScale; }
     void SetupAttachment(USceneComponent* InParent);
 
+    virtual UObject* Duplicate() override;
+    virtual void DuplicateSubObjects() override;
+
 private:
     class UTextUUID* uuidText = nullptr;
 

@@ -22,5 +22,8 @@ protected:
     TArray<UMaterial*> OverrideMaterials;
 public:
     TArray<UMaterial*>& GetOverrideMaterials() { return OverrideMaterials; }
+
+    virtual UObject* Duplicate() override;
+    virtual void DuplicateSubObjects() override;
 };
 
