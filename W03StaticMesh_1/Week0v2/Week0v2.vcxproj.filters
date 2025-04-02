@@ -424,6 +424,15 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Level.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\EditorEngine.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\World\WorldType.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\World\WorldContext.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\World\WorldManager.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\GameViewportClient.h" />
+    <ClInclude Include="Engine\Source\Editor\UnrealEd\Editor.h" />
+    <ClInclude Include="Engine\Source\Runtime\Core\CoreGlobals.h" />
+    <ClInclude Include="Engine\Source\Editor\LevelEditor\SLevelViewport.h" />
+    <ClInclude Include="Engine\Source\Editor\UnrealEd\LevelEditorViewport.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\Camera\CameraType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Source\ThirdParty\DirectXTK\Include\DDSTextureLoader.h" />
@@ -515,5 +524,13 @@
   <ItemGroup>
     <ClCompile Include="Engine\Source\Runtime\Engine\Level.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\EditorEngine.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\World\WorldContext.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\World\WorldManager.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.cpp" />
+    <ClCompile Include="Engine\Source\Editor\UnrealEd\Editor.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Core\CoreGloblas.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\GameViewportClient.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Classes\Engine\UnrealClient.cpp" />
+    <ClCompile Include="Engine\Source\Editor\LevelEditor\SLevelViewport.cpp" />
   </ItemGroup>
 </Project>

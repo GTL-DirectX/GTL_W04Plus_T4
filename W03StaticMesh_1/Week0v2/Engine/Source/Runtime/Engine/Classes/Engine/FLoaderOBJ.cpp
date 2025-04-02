@@ -2,13 +2,15 @@
 #include "UObject/ObjectFactory.h"
 #include "Components/Material/Material.h"
 #include "Components/Mesh/StaticMesh.h"
+#include "Engine/Engine.h"
+#include "World/World.h"
 
 UMaterial* FManagerOBJ::CreateMaterial(FObjMaterialInfo materialInfo)
 {
     if (materialMap[materialInfo.MTLName] != nullptr)
         return materialMap[materialInfo.MTLName];
-
-    UMaterial* newMaterial = FObjectFactory::ConstructObject<UMaterial>();
+    
+    UMaterial* newMaterial = FObjectFactory::ConstructObject<UMaterial>(GWorld);
     newMaterial->SetMaterialInfo(materialInfo);
     materialMap.Add(materialInfo.MTLName, newMaterial);
     return newMaterial;
@@ -31,7 +33,7 @@ UStaticMesh* FManagerOBJ::CreateStaticMesh(FString filePath)
         return staticMesh;
     }
 
-    staticMesh = FObjectFactory::ConstructObject<UStaticMesh>();
+    staticMesh = FObjectFactory::ConstructObject<UStaticMesh>(GWorld);
     staticMesh->SetData(staticMeshRenderData);
 
     staticMeshMap.Add(staticMeshRenderData->ObjectName, staticMesh);

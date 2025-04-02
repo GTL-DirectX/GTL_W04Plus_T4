@@ -114,6 +114,26 @@ public:
 
         return true;
     }
+
+    T First() 
+    {
+        return ContainerPrivate.front();
+    }
+
+    T First() const
+    {
+        return ContainerPrivate.front();
+    }
+
+    T Last()
+    {
+        return ContainerPrivate.back();
+    }
+
+    T Last() const
+    {
+        return ContainerPrivate.back();
+    }
 };
 
 

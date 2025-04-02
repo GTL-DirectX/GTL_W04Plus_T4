@@ -1,4 +1,5 @@
 #include "EngineLoop.h"
+
 #include "ImGuiManager.h"
 #include "World/World.h"
 #include "Camera/CameraComponent.h"
@@ -6,9 +7,15 @@
 #include "UnrealEd/EditorViewportClient.h"
 #include "UnrealEd/UnrealEd.h"
 #include "UnrealClient.h"
+// @todo Use Engine.h
+#include "Editor.h"
+#include "Engine/EditorEngine.h"
 #include "slate/Widgets/Layout/SSplitter.h"
 #include "LevelEditor/SLevelEditor.h"
 #include "CoreUObject/UObject/UObjectArray.h"
+#include "CoreUObject/UObject/ObjectFactory.h"
+
+#include "Engine/EditorEngine.h"
 
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -97,7 +104,6 @@ uint32 FEngineLoop::TotalAllocationCount = 0;
 FEngineLoop::FEngineLoop()
     : hWnd(nullptr)
     , UIMgr(nullptr)
-    , GWorld(nullptr)
     , LevelEditor(nullptr)
     , UnrealEditor(nullptr)
 {
@@ -121,12 +127,12 @@ int32 FEngineLoop::Init(HINSTANCE hInstance)
     UIMgr = new UImGuiManager;
     UIMgr->Initialize(hWnd, graphicDevice.Device, graphicDevice.DeviceContext);
 
+    GEngine = FObjectFactory::ConstructObject<UEditorEngine>(nullptr);
+    GEngine->Init();
+
     resourceMgr.Initialize(&renderer, &graphicDevice);
     LevelEditor = new SLevelEditor();
     LevelEditor->Initialize();
-
-    GWorld = new UWorld;
-    GWorld->Initialize();
 
     return 0;
 }
@@ -135,6 +141,7 @@ int32 FEngineLoop::Init(HINSTANCE hInstance)
 void FEngineLoop::Render()
 {
     graphicDevice.Prepare();
+
     if (LevelEditor->IsMultiViewport())
     {
         std::shared_ptr<FEditorViewportClient> viewportClient = GetLevelEditor()->GetActiveViewportClient();
@@ -147,8 +154,8 @@ void FEngineLoop::Render()
             // renderer.PrepareShader();
             // renderer.UpdateLightBuffer();
             // RenderWorld();
-            renderer.PrepareRender();
-            renderer.Render(GetWorld(),LevelEditor->GetActiveViewportClient());
+            renderer.PrepareRender(GWorld->WorldType);
+            renderer.Render(GWorld, LevelEditor->GetActiveViewportClient());
         }
         GetLevelEditor()->SetViewportClient(viewportClient);
     }
@@ -160,8 +167,8 @@ void FEngineLoop::Render()
         // renderer.PrepareShader();
         // renderer.UpdateLightBuffer();
         // RenderWorld();
-        renderer.PrepareRender();
-        renderer.Render(GetWorld(),LevelEditor->GetActiveViewportClient());
+        renderer.PrepareRender(GWorld->WorldType);
+        renderer.Render(GWorld, LevelEditor->GetActiveViewportClient());
     }
 }
 
@@ -193,7 +200,7 @@ void FEngineLoop::Tick()
         }
 
         Input();
-        GWorld->Tick(elapsedTime);
+        GEngine->Tick(elapsedTime);
         LevelEditor->Tick(elapsedTime);
         Render();
         UIMgr->BeginFrame();
@@ -248,8 +255,6 @@ void FEngineLoop::Input()
 void FEngineLoop::Exit()
 {
     LevelEditor->Release();
-    GWorld->Release();
-    delete GWorld;
     UIMgr->Shutdown();
     delete UIMgr;
     resourceMgr.Release(&renderer);
@@ -276,4 +281,33 @@ void FEngineLoop::WindowInit(HINSTANCE hInstance)
         CW_USEDEFAULT, CW_USEDEFAULT, 1000, 1000,
         nullptr, nullptr, hInstance, nullptr
     );
+}
+
+void FEngineLoop::StartPIE()
+{
+    if (GWorld->IsPIEWorld())
+    {
+        return;
+    }
+
+    UWorld* EditorWorld = GEditor->GetEditorWorldContext().World();
+
+    UWorld* PIEWorld = UWorld::DuplicateWorldForPIE(EditorWorld);
+
+    GWorld = PIEWorld;
+    UE_LOG(LogLevel::Display, *GWorld->GetName());
+
+    // AActor::BeginPlay()
+    PIEWorld->InitializeActorsForPlay();
+}
+
+void FEngineLoop::EndPIE()
+{
+    if (GWorld && GWorld->IsPIEWorld())
+    {
+        GWorld->CleanupWorld();
+        delete GWorld;
+        GWorld = GEditor->GetEditorWorldContext().World();
+        UE_LOG(LogLevel::Display, *GWorld->GetName());
+    }
 }

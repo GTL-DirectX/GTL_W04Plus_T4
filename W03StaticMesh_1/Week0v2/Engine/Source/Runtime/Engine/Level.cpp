@@ -17,12 +17,6 @@ void ULevel::Initialize()
 {
     //SpawnObject(OBJ_CUBE);
     FManagerOBJ::CreateStaticMesh("Assets/Dodge/Dodge.obj");
-
-    /*FManagerOBJ::CreateStaticMesh("Assets/SkySphere.obj");
-    AActor* SpawnedActor = SpawnActor<AActor>();
-    USkySphereComponent* skySphere = SpawnedActor->AddComponent<USkySphereComponent>();
-    skySphere->SetStaticMesh(FManagerOBJ::GetStaticMesh(L"SkySphere.obj"));
-    skySphere->GetStaticMesh()->GetMaterials()[0]->Material->SetDiffuse(FVector((float)32 / 255, (float)171 / 255, (float)191 / 255));*/
 }
 
 void ULevel::Tick(float DeltaTime)
@@ -57,6 +51,12 @@ void ULevel::Release()
     Actors.Empty();
 
     GUObjectArray.ProcessPendingDestroyObjects();
+}
+
+void ULevel::AddPendingActor(AActor* Actor)
+{
+    if (Actor)
+        PendingBeginPlayActors.Add(Actor);
 }
 
 void ULevel::AddActor(AActor* Actor)
