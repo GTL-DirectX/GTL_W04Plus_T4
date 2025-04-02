@@ -331,6 +331,7 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
                     {
                         SpawnedActor = Level->SpawnActor<AActor>();
                         SpawnedActor->SetActorLabel(TEXT("OBJ_ACTOR"));
+                        SpawnedActor->AddComponent<USceneComponent>();
                     }
                 case OBJ_TRIANGLE:
                 case OBJ_CAMERA:
