@@ -6,7 +6,7 @@
 #include "Components/LightComponent.h"
 #include "Components/SphereComp.h"
 #include "Components/UParticleSubUVComp.h"
-#include "Components/UText.h"
+#include "Components/TextRenderComponent.h"
 #include "Engine/FLoaderOBJ.h"
 #include "Engine/StaticMeshActor.h"
 #include "ImGUI/imgui_internal.h"
@@ -251,7 +251,8 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
             { .label= "Sphere",    .obj= OBJ_SPHERE },
             { .label= "SpotLight", .obj= OBJ_SpotLight },
             { .label= "Particle",  .obj= OBJ_PARTICLE },
-            { .label= "Text",      .obj= OBJ_Text }
+            { .label= "Text",      .obj= OBJ_Text },
+            { .label = "Actor",    .obj= OBJ_ACTOR },
         };
 
         for (const auto& primitive : primitives)
@@ -284,7 +285,7 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
                 {
                     SpawnedActor = Level->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_SpotLight"));
-                    SpawnedActor->AddComponent<ULightComponentBase>();
+                    SpawnedActor->AddComponent<ULightComponentComponent>();
                     break;
                 }
                 case OBJ_PARTICLE:
@@ -302,12 +303,17 @@ void ControlEditorPanel::CreateModifyButton(ImVec2 ButtonSize, ImFont* IconFont)
                 {
                     SpawnedActor = Level->SpawnActor<AActor>();
                     SpawnedActor->SetActorLabel(TEXT("OBJ_Text"));
-                    UText* TextComponent = SpawnedActor->AddComponent<UText>();
+                    UTextRenderComponent* TextComponent = SpawnedActor->AddComponent<UTextRenderComponent>();
                     TextComponent->SetTexture(L"Assets/Texture/font.png");
                     TextComponent->SetRowColumnCount(106, 106);
                     TextComponent->SetText(L"안녕하세요 Jungle 1");
                     break;
                 }
+                case OBJ_ACTOR:
+                    {
+                        SpawnedActor = Level->SpawnActor<AActor>();
+                        SpawnedActor->SetActorLabel(TEXT("OBJ_ACTOR"));
+                    }
                 case OBJ_TRIANGLE:
                 case OBJ_CAMERA:
                 case OBJ_PLAYER:

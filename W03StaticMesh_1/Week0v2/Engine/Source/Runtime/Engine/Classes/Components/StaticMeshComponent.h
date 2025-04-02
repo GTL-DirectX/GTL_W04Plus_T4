@@ -7,7 +7,7 @@ class UStaticMeshComponent : public UMeshComponent
     DECLARE_CLASS(UStaticMeshComponent, UMeshComponent)
 
 public:
-    UStaticMeshComponent() = default;
+    UStaticMeshComponent();
 
     PROPERTY(int, selectedSubMeshIndex);
 

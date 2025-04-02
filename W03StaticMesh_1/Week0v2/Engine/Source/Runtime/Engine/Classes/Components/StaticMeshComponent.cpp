@@ -6,6 +6,11 @@
 #include "UnrealEd/PrimitiveBatch.h"
 
 
+UStaticMeshComponent::UStaticMeshComponent()
+{
+    SetType(StaticClass()->GetName());
+}
+
 uint32 UStaticMeshComponent::GetNumMaterials() const
 {
     if (staticMesh == nullptr) return 0;

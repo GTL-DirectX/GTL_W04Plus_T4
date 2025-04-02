@@ -4,7 +4,7 @@
 #include "Actors/Player.h"
 #include "Components/LightComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Components/UText.h"
+#include "Components/TextRenderComponent.h"
 #include "Engine/FLoaderOBJ.h"
 #include "Math/MathUtility.h"
 #include "UnrealEd/ImGuiWidget.h"
@@ -42,9 +42,16 @@ void PropertyEditorPanel::Render()
     
     AEditorPlayer* player = GEngineLoop.GetWorld()->GetEditorPlayer();
     AActor* PickedActor = GEngineLoop.GetWorld()->GetLevel()->GetSelectedActor();
+    
     if (PickedActor)
     {
         ImGui::SetItemDefaultFocus();
+
+        if (ImGui::Button("Add"))
+        {
+            PickedActor->AddComponent<UStaticMeshComponent>();
+        }
+        
         // TreeNode 배경색을 변경 (기본 상태)
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
         if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -83,7 +90,7 @@ void PropertyEditorPanel::Render()
 
     // TODO: 추후에 RTTI를 이용해서 프로퍼티 출력하기
     if (PickedActor)
-    if (ULightComponentBase* lightObj = Cast<ULightComponentBase>(PickedActor->GetRootComponent()))
+    if (ULightComponentComponent* lightObj = Cast<ULightComponentComponent>(PickedActor->GetRootComponent()))
     {
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
         if (ImGui::TreeNodeEx("SpotLight Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -161,7 +168,7 @@ void PropertyEditorPanel::Render()
 
     // TODO: 추후에 RTTI를 이용해서 프로퍼티 출력하기
     if (PickedActor)
-    if (UText* textOBj = Cast<UText>(PickedActor->GetRootComponent()))
+    if (UTextRenderComponent* textOBj = Cast<UTextRenderComponent>(PickedActor->GetRootComponent()))
     {
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
         if (ImGui::TreeNodeEx("Text Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -197,10 +204,22 @@ void PropertyEditorPanel::Render()
 
     // TODO: 추후에 RTTI를 이용해서 프로퍼티 출력하기
     if (PickedActor)
-    if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(PickedActor->GetRootComponent()))
     {
-        RenderForStaticMesh(StaticMeshComponent);
-        RenderForMaterial(StaticMeshComponent);
+        UStaticMeshComponent* StaticMeshComp = nullptr;
+        for (const auto Component : PickedActor->GetComponents())
+        {
+            if (UStaticMeshComponent* Comp = Cast<UStaticMeshComponent>(Component))
+            {
+                StaticMeshComp = Comp;
+                break;
+            }
+        }
+        
+        if (StaticMeshComp)
+        {
+            RenderForStaticMesh(StaticMeshComp);
+            RenderForMaterial(StaticMeshComp);
+        }
     }
     ImGui::End();
 }
@@ -262,10 +281,10 @@ void PropertyEditorPanel::HSVToRGB(float h, float s, float v, float& r, float& g
 
 void PropertyEditorPanel::RenderForStaticMesh(UStaticMeshComponent* StaticMeshComp)
 {
-    if (StaticMeshComp->GetStaticMesh() == nullptr)
-    {
-        return;
-    }
+    // if (StaticMeshComp->GetStaticMesh() == nullptr)
+    // {
+    //     return;
+    // }
     
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
     if (ImGui::TreeNodeEx("Static Mesh", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -273,7 +292,7 @@ void PropertyEditorPanel::RenderForStaticMesh(UStaticMeshComponent* StaticMeshCo
         ImGui::Text("StaticMesh");
         ImGui::SameLine();
 
-        FString PreviewName = StaticMeshComp->GetStaticMesh()->GetRenderData()->DisplayName;
+        FString PreviewName = (StaticMeshComp->GetStaticMesh() != nullptr) ? StaticMeshComp->GetStaticMesh()->GetRenderData()->DisplayName : "";
         const TMap<FWString, UStaticMesh*> Meshes = FManagerOBJ::GetStaticMeshes();
         if (ImGui::BeginCombo("##StaticMesh", GetData(PreviewName), ImGuiComboFlags_None))
         {
