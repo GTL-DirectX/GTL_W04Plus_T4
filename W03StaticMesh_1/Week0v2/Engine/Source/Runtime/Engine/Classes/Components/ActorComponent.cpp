@@ -83,3 +83,24 @@ void UActorComponent::Deactivate()
     // TODO: Tick 멈추기
     bIsActive = false;
 }
+
+
+UObject* UActorComponent::Duplicate()
+{
+    UActorComponent* NewObj = FObjectFactory::ConstructObject<UActorComponent>();
+    NewObj->bHasBeenInitialized = this->bHasBeenInitialized;
+    NewObj->bHasBegunPlay = this->bHasBegunPlay;
+    NewObj->bIsBeingDestroyed = this->bIsBeingDestroyed;
+    NewObj->bIsActive = this->bIsActive;
+    NewObj->bTickEnabled = this->bTickEnabled;
+    NewObj->bAutoActive = this->bAutoActive;
+    NewObj->Owner = nullptr;
+    NewObj->DuplicateSubObjects();
+
+    return NewObj;
+}
+
+void UActorComponent::DuplicateSubObjects()
+{
+    Super::DuplicateSubObjects();
+}

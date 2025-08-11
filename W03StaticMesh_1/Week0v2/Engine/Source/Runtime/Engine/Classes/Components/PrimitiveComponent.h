@@ -30,5 +30,8 @@ public:
         //staticMesh = FEngineLoop::resourceMgr.GetMesh(m_Type);
     }
     FBoundingBox GetBoundingBox() { return AABB; }
+
+    virtual UObject* Duplicate() override;
+    virtual void DuplicateSubObjects() override;
 };
 

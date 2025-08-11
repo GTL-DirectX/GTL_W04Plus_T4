@@ -32,30 +32,21 @@ private:
 
     FName NamePrivate;
     UClass* ClassPrivate = nullptr;
+    UObject* OuterPrivate = nullptr;
 
 public:
     UObject();
     virtual ~UObject() = default;
 
 public:
-
-    UObject* ObjectA;
-    UObject* ObjectB;
-
-    UObject* SubObjectA;
-    UObject* SubObjectB;
-
-    virtual void DuplicateSubObjects();
-
     virtual UObject* Duplicate();
+    virtual void DuplicateSubObjects();
 
 public:
 
 
-    UWorld* GetWorld()
-    {
-        return GEngineLoop.GetWorld();
-    }
+    virtual UWorld* GetWorld() const;
+    UObject* GetOuter() const { return OuterPrivate; }
 
     FEngineLoop& GetEngine()
     {

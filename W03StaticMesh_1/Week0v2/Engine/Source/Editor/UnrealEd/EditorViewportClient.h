@@ -11,20 +11,11 @@
 #define MIN_ORTHOZOOM				1.0							/* 2D ortho viewport zoom >= MIN_ORTHOZOOM */
 #define MAX_ORTHOZOOM				1e25	
 
-extern FEngineLoop GEngineLoop;
-
-
-
+/**
+ * Stores the transformation data for the viewport camera
+ */
 struct FViewportCameraTransform
 {
-private:
-
-public:
-
-    FVector GetForwardVector();
-    FVector GetRightVector();
-    FVector GetUpVector();
-
 public:
     FViewportCameraTransform();
 
@@ -54,7 +45,7 @@ public:
     }
 
     /** Check if transition curve is playing. */
- /*    bool IsPlaying();*/
+    //bool IsPlaying();
 
     /** @return The transform's location */
     FORCEINLINE const FVector& GetLocation() const { return ViewLocation; }
@@ -68,16 +59,23 @@ public:
     /** @return The ortho zoom amount */
     FORCEINLINE float GetOrthoZoom() const { return OrthoZoom; }
 
+    // @todo Remove
 public:
+    FVector GetForwardVector();
+    FVector GetRightVector();
+    FVector GetUpVector();
+
+private:
     /** Current viewport Position. */
     FVector	ViewLocation;
     /** Current Viewport orientation; valid only for perspective projections. */
     FVector ViewRotation;
-    FVector	DesiredLocation;
+    /** Desired viewport location when animating between two locations */
+    //FVector	DesiredLocation;
     /** When orbiting, the point we are looking at */
     FVector LookAt;
     /** Viewport start location when animating to another location */
-    FVector StartLocation;
+    //FVector StartLocation;
     /** Ortho zoom amount */
     float OrthoZoom;
 };
@@ -89,7 +87,7 @@ public:
     ~FEditorViewportClient();
 
     virtual void        Draw(FViewport* Viewport) override;
-    virtual UWorld*     GetWorld() const { return NULL; };
+    virtual UWorld*     GetWorld() const override { return NULL; };
     void Initialize(int32 viewportIndex);
     void Tick(float DeltaTime);
     void Release();

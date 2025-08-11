@@ -9,7 +9,7 @@ class FObjectFactory
 public:
     template<typename T>
         requires std::derived_from<T, UObject>
-    static T* ConstructObject()
+    static T* ConstructObject(UObject* InOuter)
     {
         uint32 id = UEngineStatics::GenUUID();
         FString Name = T::StaticClass()->GetName() + "_" + std::to_string(id);
@@ -18,6 +18,7 @@ public:
         Obj->ClassPrivate = T::StaticClass();
         Obj->NamePrivate = Name;
         Obj->UUID = id;
+        Obj->OuterPrivate = InOuter;
 
         GUObjectArray.AddObject(Obj);
 

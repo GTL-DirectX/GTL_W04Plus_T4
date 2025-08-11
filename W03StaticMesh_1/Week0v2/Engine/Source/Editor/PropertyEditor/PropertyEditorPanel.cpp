@@ -4,7 +4,7 @@
 #include "Actors/Player.h"
 #include "Components/LightComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "Components/TextRenderComponent.h"
+#include "Components/UText.h"
 #include "Engine/FLoaderOBJ.h"
 #include "Math/MathUtility.h"
 #include "UnrealEd/ImGuiWidget.h"
@@ -40,49 +40,11 @@ void PropertyEditorPanel::Render()
     /* Render Start */
     ImGui::Begin("Detail", nullptr, PanelFlags);
     
-    AEditorPlayer* player = GEngineLoop.GetWorld()->GetEditorPlayer();
-    AActor* PickedActor = GEngineLoop.GetWorld()->GetLevel()->GetSelectedActor();
-    
+    AEditorPlayer* player = GWorld->GetEditorPlayer();
+    AActor* PickedActor = GWorld->GetCurrentLevel()->GetSelectedActor();
     if (PickedActor)
     {
         ImGui::SetItemDefaultFocus();
-
-        static int AddIndex = 0;
-        
-        ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 85.0f);
-        if (ImGui::Button("Add", ImVec2(80.0f, 32.0f)))
-        {
-            if (AddIndex == 0)
-            {
-                PickedActor->AddComponent<UStaticMeshComponent>();
-            }
-
-            if (AddIndex == 1)
-            {
-                auto Bill = PickedActor->AddComponent<UBillboardComponent>();
-                Bill->SetTexture(L"Assets/Texture/emart.png");
-            }
-
-            if (AddIndex == 2)
-            {
-                PickedActor->AddComponent<ULightComponentComponent>();
-            }
-            AddIndex++;
-        }
-
-        
-        if (ImGui::TreeNodeEx(*PickedActor->GetName(), ImGuiTreeNodeFlags_Framed| ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
-        {
-            for (const auto ActorComp : PickedActor->GetComponents())
-            {
-                if (ImGui::Selectable(*ActorComp->GetName()))
-                {
-                }
-            }
-
-            ImGui::TreePop();
-        }
-        
         // TreeNode 배경색을 변경 (기본 상태)
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
         if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -121,7 +83,7 @@ void PropertyEditorPanel::Render()
 
     // TODO: 추후에 RTTI를 이용해서 프로퍼티 출력하기
     if (PickedActor)
-    if (ULightComponentComponent* lightObj = Cast<ULightComponentComponent>(PickedActor->GetRootComponent()))
+    if (ULightComponentBase* lightObj = Cast<ULightComponentBase>(PickedActor->GetRootComponent()))
     {
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
         if (ImGui::TreeNodeEx("SpotLight Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -199,7 +161,7 @@ void PropertyEditorPanel::Render()
 
     // TODO: 추후에 RTTI를 이용해서 프로퍼티 출력하기
     if (PickedActor)
-    if (UTextRenderComponent* textOBj = Cast<UTextRenderComponent>(PickedActor->GetRootComponent()))
+    if (UText* textOBj = Cast<UText>(PickedActor->GetRootComponent()))
     {
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
         if (ImGui::TreeNodeEx("Text Component", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -235,40 +197,10 @@ void PropertyEditorPanel::Render()
 
     // TODO: 추후에 RTTI를 이용해서 프로퍼티 출력하기
     if (PickedActor)
+    if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(PickedActor->GetRootComponent()))
     {
-        UStaticMeshComponent* StaticMeshComp = nullptr;
-        for (const auto Component : PickedActor->GetComponents())
-        {
-            if (UStaticMeshComponent* Comp = Cast<UStaticMeshComponent>(Component))
-            {
-                StaticMeshComp = Comp;
-                break;
-            }
-        }
-        
-        if (StaticMeshComp)
-        {
-            RenderForStaticMesh(StaticMeshComp);
-            RenderForMaterial(StaticMeshComp);
-        }
-    }
-
-    if (PickedActor)
-    {
-        UBillboardComponent* BillboardComp = nullptr;
-        for (const auto Component : PickedActor->GetComponents())
-        {
-            if (UBillboardComponent* Comp = Cast<UBillboardComponent>(Component))
-            {
-                BillboardComp = Comp;
-                break;
-            }
-        }
-
-        if (BillboardComp)
-        {
-            RenderBillboard(BillboardComp);
-        }
+        RenderForStaticMesh(StaticMeshComponent);
+        RenderForMaterial(StaticMeshComponent);
     }
     ImGui::End();
 }
@@ -330,10 +262,10 @@ void PropertyEditorPanel::HSVToRGB(float h, float s, float v, float& r, float& g
 
 void PropertyEditorPanel::RenderForStaticMesh(UStaticMeshComponent* StaticMeshComp)
 {
-    // if (StaticMeshComp->GetStaticMesh() == nullptr)
-    // {
-    //     return;
-    // }
+    if (StaticMeshComp->GetStaticMesh() == nullptr)
+    {
+        return;
+    }
     
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
     if (ImGui::TreeNodeEx("Static Mesh", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
@@ -341,7 +273,7 @@ void PropertyEditorPanel::RenderForStaticMesh(UStaticMeshComponent* StaticMeshCo
         ImGui::Text("StaticMesh");
         ImGui::SameLine();
 
-        FString PreviewName = (StaticMeshComp->GetStaticMesh() != nullptr) ? StaticMeshComp->GetStaticMesh()->GetRenderData()->DisplayName : "";
+        FString PreviewName = StaticMeshComp->GetStaticMesh()->GetRenderData()->DisplayName;
         const TMap<FWString, UStaticMesh*> Meshes = FManagerOBJ::GetStaticMeshes();
         if (ImGui::BeginCombo("##StaticMesh", GetData(PreviewName), ImGuiComboFlags_None))
         {
@@ -635,33 +567,6 @@ void PropertyEditorPanel::RenderCreateMaterialView()
     }
 
     ImGui::End();
-}
-
-void PropertyEditorPanel::RenderBillboard(UBillboardComponent* BillboardComp)
-{
-
-    if (ImGui::TreeNodeEx("Sprite", ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_DefaultOpen)) // 트리 노드 생성
-    {
-        FWString PreviewName = BillboardComp->TextureName;
-        std::string ConvertPreviewName(PreviewName.begin(), PreviewName.end());
-        const TMap<FWString, std::shared_ptr<FTexture>> Textures = FEngineLoop::resourceMgr.GetTextures();
-    
-        if (ImGui::BeginCombo("##Sprite", ConvertPreviewName.c_str(), ImGuiComboFlags_None))
-        {
-            for (auto Sprite : Textures)
-            {
-                std::string ss(Sprite.Key.begin(), Sprite.Key.end());
-                if (ImGui::Selectable(ss.c_str()))
-                {
-                    BillboardComp->SetTexture(Sprite.Key);
-                }
-            }
-
-            ImGui::EndCombo();
-        }
-        ImGui::TreePop();
-    }
-
 }
 
 void PropertyEditorPanel::OnResize(HWND hWnd)

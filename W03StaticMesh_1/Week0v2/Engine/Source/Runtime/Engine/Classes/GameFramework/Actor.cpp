@@ -47,7 +47,7 @@ bool AActor::Destroy()
 {
     if (!IsActorBeingDestroyed())
     {
-        if (ULevel* Level = GetWorld()->GetLevel())
+        if (ULevel* Level = GetWorld()->GetCurrentLevel())
         {
             Level->RemoveActor(this);
             bActorIsBeingDestroyed = true;

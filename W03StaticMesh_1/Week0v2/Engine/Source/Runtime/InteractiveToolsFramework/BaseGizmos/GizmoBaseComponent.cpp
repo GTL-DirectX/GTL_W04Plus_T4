@@ -56,8 +56,9 @@ int UGizmoBaseComponent::CheckRayIntersection(FVector& rayOrigin, FVector& rayDi
 void UGizmoBaseComponent::TickComponent(float DeltaTime)
 {
     Super::TickComponent(DeltaTime);
-
-    if (AActor* PickedActor = GetWorld()->GetLevel()->GetSelectedActor())
+    if (!GetWorld())
+        return;
+    if (AActor* PickedActor = GetWorld()->GetCurrentLevel()->GetSelectedActor())
     {
         std::shared_ptr<FEditorViewportClient> activeViewport = GetEngine().GetLevelEditor()->GetActiveViewportClient();
         if (activeViewport->IsPerspective())

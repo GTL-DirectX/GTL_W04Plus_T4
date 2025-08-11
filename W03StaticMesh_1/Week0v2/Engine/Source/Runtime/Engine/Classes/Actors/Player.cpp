@@ -119,7 +119,7 @@ void AEditorPlayer::Input()
 
     if (GetAsyncKeyState(VK_DELETE) & 0x8000)
     {
-        ULevel* Level = GetWorld()->GetLevel();
+        ULevel* Level = GetWorld()->GetCurrentLevel();
         if (AActor* PickedActor = Level->GetSelectedActor())
         {
             Level->RemoveActor(PickedActor);
@@ -131,7 +131,7 @@ void AEditorPlayer::Input()
 bool AEditorPlayer::PickGizmo(FVector& pickPosition)
 {
     bool isPickedGizmo = false;
-    if (GetWorld()->GetLevel()->GetSelectedActor())
+    if (GetWorld()->GetCurrentLevel()->GetSelectedActor())
     {
         if (cMode == CM_TRANSLATION)
         {
@@ -260,7 +260,7 @@ void AEditorPlayer::PickActor(const FVector& pickPosition)
     }
     if (Possible)
     {
-        GetWorld()->GetLevel()->SetPickedActor(Possible->GetOwner());
+        GetWorld()->GetCurrentLevel()->SetPickedActor(Possible->GetOwner());
     }
 }
 
@@ -350,7 +350,7 @@ int AEditorPlayer::RayIntersectsObject(const FVector& pickPosition, USceneCompon
 
 void AEditorPlayer::PickedObjControl()
 {
-    if (GetWorld()->GetLevel()->GetSelectedActor() && GetWorld()->GetPickingGizmo())
+    if (GetWorld()->GetCurrentLevel()->GetSelectedActor() && GetWorld()->GetPickingGizmo())
     {
         POINT currentMousePos;
         GetCursorPos(&currentMousePos);
@@ -358,7 +358,7 @@ void AEditorPlayer::PickedObjControl()
         int32 deltaY = currentMousePos.y - m_LastMousePos.y;
 
         // USceneComponent* pObj = GetWorld()->GetPickingObj();
-        AActor* PickedActor = GetWorld()->GetLevel()->GetSelectedActor();
+        AActor* PickedActor = GetWorld()->GetCurrentLevel()->GetSelectedActor();
         UGizmoBaseComponent* Gizmo = static_cast<UGizmoBaseComponent*>(GetWorld()->GetPickingGizmo());
         switch (cMode)
         {
