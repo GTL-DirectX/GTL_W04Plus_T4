@@ -60,6 +60,9 @@ public:
     void Activate();
     void Deactivate();
 
+    virtual UObject* Duplicate() override;
+    virtual void DuplicateSubObjects() override;
+
 private:
     AActor* Owner;
 

@@ -44,6 +44,9 @@ public:
         return bActorIsBeingDestroyed;
     }
 
+    bool IsTickInEditor() const { return bTickInEditor; }
+    void SetTickInEditor(bool bInTickInEditor) { bTickInEditor = bInTickInEditor; }
+
     /**
      * Actor에 컴포넌트를 새로 추가합니다.
      * @tparam T UActorComponent를 상속받은 Component
@@ -132,7 +135,7 @@ private:
 template <typename T> requires std::derived_from<T, UActorComponent>
 T* AActor::AddComponent()
 {
-    T* Component = FObjectFactory::ConstructObject<T>();
+    T* Component = FObjectFactory::ConstructObject<T>(GetOuter());
     OwnedComponents.Add(Component);
     Component->Owner = this;
 

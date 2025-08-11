@@ -12,7 +12,7 @@
 
 
 #define UE_LOG Console::GetInstance().AddLog
-
+#define WITH_EDITORONLY_DATA	1
 #define _TCHAR_DEFINED
 #include <d3d11.h>
 

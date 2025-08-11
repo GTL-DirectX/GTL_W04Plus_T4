@@ -1,4 +1,5 @@
 #include "MeshComponent.h"
+#include "CoreUObject/UObject/ObjectFactory.h"
 
 
 UMaterial* UMeshComponent::GetMaterial(uint32 ElementIndex) const
@@ -51,6 +52,27 @@ void UMeshComponent::GetUsedMaterials(TArray<UMaterial*>& Out) const
         if (UMaterial* Material = GetMaterial(ElementIndex))
         {
             Out.Add(Material);
+        }
+    }
+}
+
+UObject* UMeshComponent::Duplicate()
+{
+    UMeshComponent* NewObj = FObjectFactory::ConstructObject<UMeshComponent>();
+    NewObj->OverrideMaterials = this->OverrideMaterials;
+    NewObj->DuplicateSubObjects();
+    return NewObj;
+}
+
+void UMeshComponent::DuplicateSubObjects()
+{
+    Super::DuplicateSubObjects();
+
+    for (int32 i = 0; i < OverrideMaterials.Num(); ++i)
+    {
+        if (OverrideMaterials[i])
+        {
+            OverrideMaterials[i] = static_cast<UMaterial*>(OverrideMaterials[i]->Duplicate());
         }
     }
 }

@@ -83,7 +83,7 @@ void UTransformGizmo::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if (const AActor* PickedActor = GetWorld()->GetLevel()->GetSelectedActor())
+    if (const AActor* PickedActor = GetWorld()->GetCurrentLevel()->GetSelectedActor())
     {
         SetActorLocation(PickedActor->GetActorLocation());
         if (GetWorld()->GetEditorPlayer()->GetCoordiMode() == CoordiMode::CDM_LOCAL)
